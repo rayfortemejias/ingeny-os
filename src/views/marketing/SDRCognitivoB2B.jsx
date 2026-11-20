@@ -5004,17 +5004,35 @@ return (
                            <Box>
                               <Typography variant="h6" sx={{ fontWeight: 900, color: '#fff' }}>{kamAssigned.name}</Typography>
                               <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mb: 1 }}>{kamAssigned.role}</Typography>
-                              <Chip label="Notificado por WhatsApp" size="small" icon={<i className="ri-whatsapp-fill"></i>} sx={{ bgcolor: 'rgba(37, 211, 102, 0.1)', color: '#25D366', fontWeight: 900, '& .MuiChip-icon': { color: '#25D366' }, mb: 1 }} />
-                              <Button 
-                                 size="small" 
-                                 variant="text" 
-                                 onClick={() => { setIsHandoffModalOpen(false); setIsAssignModalOpen(true); }}
-                                 sx={{ color: '#666cff', p: 0, fontWeight: 900, display: 'flex', alignItems: 'center', gap: 0.5, fontSize: '0.75rem', textTransform: 'none' }}
-                              >
-                                 <i className="ri-exchange-line"></i> Reasignar o Reenviar
-                              </Button>
+                              <Chip label="Notificado por WhatsApp" size="small" icon={<i className="ri-whatsapp-fill"></i>} sx={{ bgcolor: 'rgba(37, 211, 102, 0.1)', color: '#25D366', fontWeight: 900, '& .MuiChip-icon': { color: '#25D366' } }} />
                            </Box>
                         </Box>
+                        <Button 
+                           fullWidth
+                           size="medium" 
+                           variant="outlined" 
+                           onClick={() => { setIsHandoffModalOpen(false); openAssignModal(lead); }}
+                           startIcon={<i className="ri-exchange-line" style={{ fontSize: '1.1rem' }}></i>}
+                           sx={{ 
+                              mt: 3,
+                              py: 1,
+                              color: '#00fbff',
+                              borderColor: '#00fbff',
+                              bgcolor: 'rgba(0, 251, 255, 0.08)',
+                              fontWeight: 900,
+                              fontSize: '0.82rem',
+                              letterSpacing: '0.5px',
+                              borderRadius: '10px',
+                              textTransform: 'uppercase',
+                              '&:hover': {
+                                 bgcolor: 'rgba(0, 251, 255, 0.2)',
+                                 borderColor: '#00fbff',
+                                 boxShadow: '0 0 14px rgba(0, 251, 255, 0.35)'
+                              }
+                           }}
+                        >
+                           Cambiar / Reasignar Ejecutivo
+                        </Button>
                      </NeuralCard>
 
                      <NeuralCard sx={{ p: 4, bgcolor: 'rgba(245, 158, 11, 0.05)', borderColor: 'rgba(245, 158, 11, 0.3)' }}>
