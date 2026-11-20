@@ -601,6 +601,7 @@ const SDRCognitivoB2B = () => {
   const [isChatModalOpen, setIsChatModalOpen] = useState(false)
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+  const [pendingHandoffLead, setPendingHandoffLead] = useState(null)
   const [isValidatingConfig, setIsValidatingConfig] = useState(false)
   const [selectedKam, setSelectedKam] = useState(null)
   const [viewMode, setViewMode] = useState('grid')
@@ -5648,6 +5649,9 @@ return (
           newKam.workload = 'Sin Carga (0 leads)';
 
           setKamsList(prev => [...prev, newKam])
+          if (pendingHandoffLead) {
+            setSelectedKam(newKam)
+          }
 
           // Enviar correo de invitación
           await sendKamInviteEmail({
@@ -5682,15 +5686,70 @@ return (
   const renderEquipo = () => {
     return (
       <Box sx={{ animation: `${fadeIn} 0.5s` }}>
-         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+         {pendingHandoffLead && (
+           <Box
+             sx={{
+               mb: 4,
+               p: 2.5,
+               borderRadius: '14px',
+               background: 'linear-gradient(90deg, rgba(102, 108, 255, 0.16) 0%, rgba(0, 251, 255, 0.12) 100%)',
+               border: '1px solid rgba(0, 251, 255, 0.45)',
+               boxShadow: '0 8px 28px rgba(0, 251, 255, 0.12)',
+               display: 'flex',
+               flexDirection: { xs: 'column', md: 'row' },
+               alignItems: { xs: 'flex-start', md: 'center' },
+               justifyContent: 'space-between',
+               gap: 2
+             }}
+           >
+             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+               <Avatar sx={{ bgcolor: 'rgba(0, 251, 255, 0.2)', color: '#00fbff', fontWeight: 900, border: '1px solid #00fbff' }}>
+                 <i className="ri-user-shared-line"></i>
+               </Avatar>
+               <Box>
+                 <Typography variant="subtitle1" sx={{ color: '#fff', fontWeight: 900 }}>
+                   🎯 Handoff pendiente para el Lead: <span style={{ color: '#00fbff' }}>{pendingHandoffLead.name || 'Prospecto'}</span> {pendingHandoffLead.phone ? `(+${String(pendingHandoffLead.phone).replace(/^\+/, '')})` : ''}
+                 </Typography>
+                 <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.75)' }}>
+                   Registra un ejecutivo aquí (o agrégate a ti mismo) y luego haz clic en <strong>"Elegir para Handoff"</strong> en su tarjeta o vuelve a la Sala de Guerra para completar la transferencia.
+                 </Typography>
+               </Box>
+             </Box>
+             <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+               <Button
+                 variant="contained"
+                 size="small"
+                 onClick={() => {
+                   setSelectedLead(pendingHandoffLead);
+                   setIsAssignModalOpen(true);
+                 }}
+                 sx={{ bgcolor: '#666cff', color: '#fff', fontWeight: 900, '&:hover': { bgcolor: '#5a5fc9' } }}
+               >
+                 <i className="ri-arrow-go-back-line" style={{ marginRight: '6px' }}></i>
+                 Volver a la Sala de Guerra (Handoff)
+               </Button>
+               <Button
+                 variant="outlined"
+                 size="small"
+                 onClick={() => setPendingHandoffLead(null)}
+                 sx={{ borderColor: 'rgba(255,255,255,0.25)', color: 'rgba(255,255,255,0.7)' }}
+               >
+                 Cancelar
+               </Button>
+             </Box>
+           </Box>
+         )}
+
+         <Box id="tour-equipo-header" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
            <Box>
              <Typography variant="h5" sx={{ color: '#00fbff', fontWeight: 900, mb: 1 }}>Gestión de Equipo (KAMs)</Typography>
              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-               Administra los ejecutivos comerciales disponibles, edita sus datos de contacto y reenvía accesos por WhatsApp y Correo.
+               Centro único para administrar los ejecutivos comerciales disponibles, editar sus datos de contacto y enviar accesos por WhatsApp y Correo.
              </Typography>
            </Box>
            <Box sx={{ display: 'flex', gap: 2 }}>
              <Button 
+               id="tour-equipo-self-btn"
                variant="outlined" 
                onClick={() => {
                  handleOpenNewKam({ 
@@ -5703,17 +5762,18 @@ return (
              >
                <i className="ri-user-smile-line" style={{ marginRight: '8px' }}></i> AGREGARME A MÍ MISMO
              </Button>
-             <Button variant="contained" onClick={() => handleOpenNewKam()} sx={{ bgcolor: '#00fbff', color: '#000', fontWeight: 900, '&:hover': { bgcolor: '#00e5e5' } }}>
+             <Button id="tour-equipo-new-btn" variant="contained" onClick={() => handleOpenNewKam()} sx={{ bgcolor: '#00fbff', color: '#000', fontWeight: 900, '&:hover': { bgcolor: '#00e5e5' } }}>
                <i className="ri-user-add-line" style={{ marginRight: '8px' }}></i> NUEVO EJECUTIVO
              </Button>
            </Box>
          </Box>
 
+         <Box id="tour-equipo-list">
          {kamsList.length === 0 ? (
            <ModernPaper sx={{ textAlign: 'center', py: 10, bgcolor: 'rgba(0, 251, 255, 0.05)', border: '1px dashed rgba(0, 251, 255, 0.3)' }}>
               <i className="ri-team-line" style={{ fontSize: '4rem', color: '#00fbff' }}></i>
               <Typography variant="h6" sx={{ color: '#00fbff', fontWeight: 900, mt: 4 }}>Sin Ejecutivos</Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', mt: 1 }}>Añade un KAM para poder asignarle leads y generar su código de acceso.</Typography>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', mt: 1 }}>Añade un KAM (o agrégate a ti mismo) para poder asignarle leads y activar Auto-KAM.</Typography>
            </ModernPaper>
          ) : (
            <Grid container spacing={4}>
@@ -5833,14 +5893,38 @@ return (
                      </Box>
                    </Box>
                    
-                   <Box sx={{ mt: 'auto', pt: 1 }}>
+                   <Box sx={{ mt: 'auto', pt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
                      <Chip label={kam.workload || 'Carga: Desconocida'} size="small" variant="outlined" sx={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)', width: '100%' }} />
+                     {pendingHandoffLead && (
+                       <Button
+                         variant="contained"
+                         size="small"
+                         fullWidth
+                         onClick={() => {
+                           setSelectedKam(kam);
+                           setSelectedLead(pendingHandoffLead);
+                           setPendingHandoffLead(null);
+                           setIsAssignModalOpen(true);
+                         }}
+                         sx={{
+                           bgcolor: '#666cff',
+                           color: '#fff',
+                           fontWeight: 900,
+                           mt: 0.5,
+                           '&:hover': { bgcolor: '#5a5fc9' }
+                         }}
+                       >
+                         <i className="ri-check-double-line" style={{ marginRight: '6px' }}></i>
+                         Elegir para Handoff ({pendingHandoffLead.name || 'Lead'})
+                       </Button>
+                     )}
                    </Box>
                  </NeuralCard>
                </Grid>
              ))}
            </Grid>
          )}
+         </Box>
 
          {/* Modal Crear / Editar KAM */}
          <Dialog 
@@ -6743,6 +6827,18 @@ return (
                             <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', display: 'block' }}>Radar de prospectos, chat y handoff</Typography>
                           </Box>
                         </MenuItem>
+                        <MenuItem 
+                          onClick={() => { setTourMenuAnchor(null); setActiveTab(5); setTourType('team_handoff'); setTimeout(() => setRunTour(true), 350); }}
+                          sx={{ borderRadius: '8px', my: 0.3, '&:hover': { bgcolor: 'rgba(16, 185, 129, 0.1)' } }}
+                        >
+                          <Box sx={{ mr: 1.5, color: '#10b981', display: 'flex', alignItems: 'center' }}>
+                            <i className="ri-team-line" style={{ fontSize: '1.2rem' }}></i>
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#fff' }}>4. Equipo KAMs, Auto-KAM & Handoff</Typography>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', display: 'block' }}>Ejecutivos, invitaciones, Auto-KAM y traspaso</Typography>
+                          </Box>
+                        </MenuItem>
                       </Menu>
                     )}
 
@@ -6945,6 +7041,7 @@ return (
                     </Box>
 
                     {/* Botón Auto-KAM (Asignación Automática de Ejecutivo Humano) */}
+                    <Box id="tour-auto-kam-btn" sx={{ display: 'inline-flex' }}>
                     {!hasRegisteredKams ? (
                       <Tooltip 
                         title="⚠️ Para activar Auto-KAM debes registrar al menos un ejecutivo (KAM) con su número de WhatsApp. Haz clic aquí para ir a 'EQUIPO / EJECUTIVOS' y registrarlo." 
@@ -7079,6 +7176,7 @@ return (
                         </Button>
                       </Tooltip>
                     )}
+                    </Box>
                     
                     <Tooltip title="Command Center — Volver al panel principal" arrow placement="bottom">
                       <Button
@@ -7343,7 +7441,7 @@ return (
               )}
               {!isExecutive && (
                 <Tooltip title="Gestión de Key Account Managers (KAMs) para Handoff." placement="top" arrow TransitionComponent={Zoom}>
-                   <Tab value={5} label="EQUIPO / EJECUTIVOS" />
+                   <Tab value={5} id="tour-tab-equipo" label="EQUIPO / EJECUTIVOS" />
                 </Tooltip>
               )}
               <Tooltip title="Bandeja de Entrada Compartida - Chatea con tus leads asignados." placement="top" arrow TransitionComponent={Zoom}>
@@ -7788,18 +7886,15 @@ return (
                   <DialogTitle sx={{ fontWeight: 900, color: lead.color || '#666cff', borderBottom: '1px solid rgba(255,255,255,0.1)', pb: 2 }}>
                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                           <i className={isAddingKam ? "ri-user-add-line" : "ri-alarm-warning-line"} style={{ fontSize: '1.5rem' }}></i> 
-                           {isAddingKam ? 'Agregar Nuevo Ejecutivo (Conexión QR)' : 'Sala de Guerra & Asignación (Handoff)'}
+                           <i className="ri-alarm-warning-line" style={{ fontSize: '1.5rem' }}></i> 
+                           Sala de Guerra & Asignación (Handoff)
                         </Box>
-                        {!isAddingKam && (
-                           <Chip icon={<i className={clientType.icon}></i>} label={`${clientType.label} - ${clientType.desc}`} sx={{ bgcolor: alpha(clientType.color, 0.1), color: clientType.color, fontWeight: 900, border: `1px solid ${clientType.color}` }} />
-                        )}
+                        <Chip icon={<i className={clientType.icon}></i>} label={`${clientType.label} - ${clientType.desc}`} sx={{ bgcolor: alpha(clientType.color, 0.1), color: clientType.color, fontWeight: 900, border: `1px solid ${clientType.color}` }} />
                      </Box>
                   </DialogTitle>
                   
                   <DialogContent sx={{ p: 0 }}>
-                     {!isAddingKam ? (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                            {/* Sección Superior: Análisis de Guerra */}
                            <Box sx={{ p: 4, bgcolor: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                               <Grid container spacing={4}>
@@ -7892,40 +7987,49 @@ return (
                               </Typography>
                               <Grid container spacing={3}>
                                  {kamsList.map((kam) => (
-                                    <Grid item xs={12} sm={6} md={3} key={kam.id}>
+                                    <Grid item xs={12} sm={6} md={3} key={kam.id || kam.ID}>
                                        <NeuralCard 
                                           onClick={() => setSelectedKam(kam)}
                                           sx={{ 
                                              p: 3, 
                                              cursor: 'pointer', 
                                              textAlign: 'center', 
-                                             border: selectedKam?.id === kam.id ? `2px solid #666cff` : '1px solid rgba(255,255,255,0.05)',
-                                             bgcolor: selectedKam?.id === kam.id ? 'rgba(102, 108, 255, 0.1)' : 'rgba(255,255,255,0.02)',
+                                             border: (selectedKam?.id || selectedKam?.ID) === (kam.id || kam.ID) ? `2px solid #666cff` : '1px solid rgba(255,255,255,0.05)',
+                                             bgcolor: (selectedKam?.id || selectedKam?.ID) === (kam.id || kam.ID) ? 'rgba(102, 108, 255, 0.1)' : 'rgba(255,255,255,0.02)',
                                              transition: 'all 0.3s ease',
                                              '&:hover': { borderColor: '#666cff' },
                                              height: '100%'
                                           }}
                                        >
-                                          <Avatar sx={{ bgcolor: alpha(kam.color, 0.1), color: kam.color, width: 64, height: 64, margin: '0 auto', mb: 2, fontWeight: 900, border: `1px solid ${kam.color}` }}>
-                                             {kam.avatar}
+                                          <Avatar sx={{ bgcolor: alpha(kam.color || '#00fbff', 0.1), color: kam.color || '#00fbff', width: 64, height: 64, margin: '0 auto', mb: 2, fontWeight: 900, border: `1px solid ${kam.color || '#00fbff'}` }}>
+                                             {kam.avatar || kam.name?.substring(0, 2).toUpperCase() || 'KAM'}
                                           </Avatar>
                                           <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#fff' }}>{kam.name}</Typography>
                                           <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', mb: 2 }}>{kam.role}</Typography>
-                                          <Chip label={`Carga: ${kam.workload}`} size="small" sx={{ bgcolor: alpha(kam.color, 0.1), color: kam.color, fontWeight: 900, fontSize: '10px' }} />
+                                          <Chip label={kam.workload ? `Carga: ${kam.workload}` : 'Disponible'} size="small" sx={{ bgcolor: alpha(kam.color || '#00fbff', 0.1), color: kam.color || '#00fbff', fontWeight: 900, fontSize: '10px' }} />
                                        </NeuralCard>
                                     </Grid>
                                  ))}
                                  <Grid item xs={12} sm={6} md={3}>
                                     <NeuralCard 
-                                       onClick={() => setIsAddingKam(true)}
+                                       onClick={() => {
+                                          setPendingHandoffLead(lead);
+                                          setIsAssignModalOpen(false);
+                                          setActiveTab(5);
+                                          setSnackbar({
+                                             open: true,
+                                             msg: 'Te llevamos a EQUIPO / EJECUTIVOS. Registra a tu ejecutivo (o a ti mismo) y selecciónalo para volver al Handoff.',
+                                             severity: 'info'
+                                          });
+                                       }}
                                        sx={{ 
                                           p: 3, 
                                           cursor: 'pointer', 
                                           textAlign: 'center', 
-                                          border: '1px dashed rgba(255,255,255,0.2)',
-                                          bgcolor: 'transparent',
+                                          border: '1px dashed rgba(0, 251, 255, 0.35)',
+                                          bgcolor: 'rgba(0, 251, 255, 0.03)',
                                           transition: 'all 0.3s ease',
-                                          '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.02)' },
+                                          '&:hover': { borderColor: '#00fbff', bgcolor: 'rgba(0, 251, 255, 0.08)' },
                                           height: '100%',
                                           display: 'flex',
                                           flexDirection: 'column',
@@ -7934,193 +8038,95 @@ return (
                                           minHeight: '220px'
                                        }}
                                     >
-                                       <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: '#fff', width: 64, height: 64, margin: '0 auto', mb: 2 }}>
-                                          <i className="ri-add-line" style={{ fontSize: '2rem' }}></i>
+                                       <Avatar sx={{ bgcolor: 'rgba(0, 251, 255, 0.12)', color: '#00fbff', width: 64, height: 64, margin: '0 auto', mb: 2, border: '1px solid rgba(0, 251, 255, 0.3)' }}>
+                                          <i className="ri-team-line" style={{ fontSize: '1.8rem' }}></i>
                                        </Avatar>
-                                       <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#fff' }}>Agregar Ejecutivo</Typography>
-                                       <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>Vincular por WhatsApp</Typography>
+                                       <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#00fbff' }}>Agregar Ejecutivo</Typography>
+                                       <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', mt: 0.5 }}>
+                                          Ir a Equipo / Ejecutivos
+                                       </Typography>
                                     </NeuralCard>
                                  </Grid>
                               </Grid>
                            </Box>
-                        </Box>
-                     ) : (
-                        <Box sx={{ p: 4 }}>
-                           <Typography variant="body1" sx={{ color: '#e9edef', mb: 2 }}>
-                              Crea un nuevo perfil para tu equipo comercial (KAM). 
-                           </Typography>
-                           <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 4 }}>
-                              Al registrar el número de WhatsApp (con código de país, ej: 5215551234567), el Agente Inteligente podrá transferirle los leads calificados en tiempo real. 
-                              El ejecutivo recibirá un mensaje automático con el resumen de la negociación (Brief) y el enlace directo para chatear con el cliente.
-                           </Typography>
-                           <Grid container spacing={6}>
-                              <Grid item xs={12} md={6}>
-                                 <Stack spacing={4}>
-                                    <TextField 
-                                       label="Nombre Completo" 
-                                       placeholder="Ej: Laura Martínez"
-                                       value={newKamData.name}
-                                       onChange={(e) => setNewKamData({...newKamData, name: e.target.value})}
-                                       InputProps={{ sx: { color: '#fff' } }}
-                                       InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
-                                       fullWidth
-                                    />
-                                    <TextField 
-                                       label="Rol / Especialidad" 
-                                       placeholder="Ej: KAM Corporativo"
-                                       value={newKamData.role}
-                                       onChange={(e) => setNewKamData({...newKamData, role: e.target.value})}
-                                       InputProps={{ sx: { color: '#fff' } }}
-                                       InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
-                                       fullWidth
-                                    />
-                                    <TextField 
-                                       label="Número de WhatsApp" 
-                                       placeholder="Ej: +1 555 123 4567"
-                                       value={newKamData.phone}
-                                       onChange={(e) => setNewKamData({...newKamData, phone: e.target.value})}
-                                       InputProps={{ sx: { color: '#fff' } }}
-                                       InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
-                                       fullWidth
-                                    />
-                                 </Stack>
-                              </Grid>
-                              <Grid item xs={12} md={6}>
-                                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', bgcolor: 'rgba(255,255,255,0.02)', p: 4, borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.1)' }}>
-                                    <Avatar sx={{ width: 80, height: 80, bgcolor: 'rgba(37, 211, 102, 0.1)', color: '#25D366', mb: 3 }}>
-                                       <i className="ri-whatsapp-line" style={{ fontSize: '4rem' }}></i>
-                                    </Avatar>
-                                    <Typography variant="h6" sx={{ color: '#25D366', fontWeight: 900, mb: 1, textAlign: 'center' }}>Flujo de Handoff Automático</Typography>
-                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', mt: 2 }}>
-                                       Una vez registrado, el SDR Inteligente usará el número de WhatsApp de este ejecutivo para enviar notificaciones cada vez que un lead cumpla con los criterios BANT (Presupuesto, Autoridad, Necesidad, Tiempo).
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', mt: 2, fontStyle: 'italic' }}>
-                                       No es necesario escanear ningún QR. Nuestro orquestador en Go usa Evolution API para enviar la notificación directamente.
-                                    </Typography>
-                                 </Box>
-                              </Grid>
-                           </Grid>
-                        </Box>
-                     )}
+                     </Box>
                   </DialogContent>
                   <DialogActions sx={{ p: 3, bgcolor: '#202c33', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                      <Button onClick={() => { 
-                        if (isAddingKam) {
-                           setIsAddingKam(false);
-                        } else {
-                           setIsAssignModalOpen(false); 
-                           setSelectedKam(null); 
-                        }
+                        setIsAssignModalOpen(false); 
+                        setSelectedKam(null); 
                      }} sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 900 }}>
-                        {isAddingKam ? 'Volver a la Lista' : 'Cancelar'}
+                        Cancelar
                      </Button>
                      
-                     {isAddingKam ? (
-                        <Button 
-                           variant="contained" 
-                           disabled={!newKamData.name || !newKamData.phone}
-                           sx={{ bgcolor: '#00fbff', color: '#000', fontWeight: 900, '&:hover': { bgcolor: '#00a3a6' }, '&.Mui-disabled': { bgcolor: 'rgba(0,251,255,0.2)' } }} 
-                           onClick={async () => {
-                              const newId = kamsList.length + 1;
-                              const newAvatar = newKamData.name.substring(0, 2).toUpperCase();
+                     <Button 
+                        variant="contained" 
+                        disabled={!selectedKam || loadingState.active}
+                        sx={{ 
+                           bgcolor: '#666cff', 
+                           color: '#fff', 
+                           fontWeight: 900, 
+                           px: 4,
+                           '&:hover': { bgcolor: '#5a5fc9' },
+                           '&.Mui-disabled': { bgcolor: 'rgba(102, 108, 255, 0.2)', color: 'rgba(255,255,255,0.3)' }
+                        }} 
+                        onClick={async () => {
+                           setLoadingState({ active: true, target: 'Handoff' })
 
-                              const newKam = { 
-                                id: newId, 
-                                name: newKamData.name, 
-                                role: newKamData.role || 'KAM B2B', 
-                                workload: 'Sin Carga (0 leads)', 
-                                avatar: newAvatar, 
-                                color: KAM_COLORS[newId % KAM_COLORS.length],
-                                phone: newKamData.phone || ''
-                              }
+                           // Actualizar UI optimísticamente
+                           setAllLeads(prev => prev.map(l => 
+                             l.name === lead.name ? { ...l, status: 'AGENDADO', assignedKam: selectedKam.name } : l
+                           ))
 
-                              setKamsList(prev => [...prev, newKam])
-
-
-                              // Persistir en backend
-                              try {
-                                await createKam({ name: newKamData.name, role: newKamData.role || 'KAM B2B', phone: newKamData.phone || '' }, companyId)
-                                addLog(`KAM ${newKamData.name} registrado en Supabase ✓`, 'success')
-                              } catch (err) {
-                                addLog(`KAM guardado localmente. Sincronización pendiente: ${err.message}`, 'info')
-                              }
-
-                              setIsAddingKam(false)
-                              setNewKamData({ name: '', role: '', phone: '', qrScanned: false })
-                              triggerAction('Nuevo Ejecutivo', `El ejecutivo ${newKamData.name} ha sido agregado exitosamente.`, 0)
-                           }}
-                        >
-                           GUARDAR EJECUTIVO
-                        </Button>
-                     ) : (
-                        <Button 
-                           variant="contained" 
-                           disabled={!selectedKam || loadingState.active}
-                           sx={{ 
-                              bgcolor: '#666cff', 
-                              color: '#fff', 
-                              fontWeight: 900, 
-                              px: 4,
-                              '&:hover': { bgcolor: '#5a5fc9' },
-                              '&.Mui-disabled': { bgcolor: 'rgba(102, 108, 255, 0.2)', color: 'rgba(255,255,255,0.3)' }
-                           }} 
-                           onClick={async () => {
-                              setLoadingState({ active: true, target: 'Handoff' })
-
-                              // Actualizar UI optimísticamente
-                              setAllLeads(prev => prev.map(l => 
-                                l.name === lead.name ? { ...l, status: 'AGENDADO', assignedKam: selectedKam.name } : l
-                              ))
-
-                              try {
-                                // Si el lead tiene ID real (viene del backend), disparar handoff real
-                                if (lead.id && selectedKam.phone) {
-                                  await triggerHandoff(lead.id, selectedKam.name, selectedKam.phone, companyId, brief, recommendedAction)
-                                  addLog(`Handoff enviado: ${selectedKam.name} notificado por WhatsApp ✓`, 'success')
-                                  setSnackbar({ open: true, msg: `Se ha enviado el brief al WhatsApp de ${selectedKam.name}.`, severity: 'success' })
-                                  if (typeof window !== 'undefined') {
-                                    window.dispatchEvent(new CustomEvent('sdr-notification', {
-                                      detail: {
-                                        id: `handoff-${lead.id}-${Date.now()}`,
-                                        title: '🚨 Transferencia a KAM Realizada',
-                                        subtitle: `${selectedKam.name} notificado por WhatsApp para atender a ${lead.name}.`,
-                                        time: 'Ahora',
-                                        isRead: false,
-                                        color: '#ec4899',
-                                        icon: 'ri-customer-service-2-line',
-                                        leadId: lead.id,
-                                        phone: lead.phone
-                                      }
-                                    }))
-                                  }
-                                } else if (lead.id) {
-                                  await updateLead(lead.id, { status: 'HANDOFF', assigned_kam: selectedKam.name }, companyId)
-                                  addLog(`Lead asignado a ${selectedKam.name}. Configura su teléfono para notificación WhatsApp.`, 'info')
-                                  setSnackbar({ open: true, msg: `Asignación efectuada sin WhatsApp (falta número).`, severity: 'info' })
-                                } else {
-                                  addLog(`Asignación efectuada a ${selectedKam.name}.`, 'info')
-                                  setSnackbar({ open: true, msg: `Asignación efectuada de prueba.`, severity: 'info' })
-                                }
-                              } catch (err) {
-                                addLog(`Error en handoff: ${err.message}`, 'alert')
-                                setSnackbar({ open: true, msg: `Error al notificar al KAM: Revise su número de WhatsApp.`, severity: 'error' })
-                                // Revertir actualización optimista
-                                setAllLeads(prev => prev.map(l => 
-                                  l.name === lead.name ? { ...l, status: lead.status, assignedKam: lead.assignedKam } : l
-                                ))
-                              } finally {
-                                setLoadingState({ active: false, target: '' })
-                                setIsAssignModalOpen(false)
-                                setSelectedKam(null)
-                              }
-                           }}
-                        >
-                           {loadingState.active && loadingState.target === 'Handoff'
-                             ? <CircularProgress size={18} color="inherit" sx={{ mr: 1 }} />
-                             : null}
-                           ASIGNAR Y NOTIFICAR POR WHATSAPP
-                        </Button>
-                     )}
+                           try {
+                             // Si el lead tiene ID real (viene del backend), disparar handoff real
+                             if (lead.id && selectedKam.phone) {
+                               await triggerHandoff(lead.id, selectedKam.name, selectedKam.phone, companyId, brief, recommendedAction)
+                               addLog(`Handoff enviado: ${selectedKam.name} notificado por WhatsApp ✓`, 'success')
+                               setSnackbar({ open: true, msg: `Se ha enviado el brief al WhatsApp de ${selectedKam.name}.`, severity: 'success' })
+                               if (typeof window !== 'undefined') {
+                                 window.dispatchEvent(new CustomEvent('sdr-notification', {
+                                   detail: {
+                                     id: `handoff-${lead.id}-${Date.now()}`,
+                                     title: '🚨 Transferencia a KAM Realizada',
+                                     subtitle: `${selectedKam.name} notificado por WhatsApp para atender a ${lead.name}.`,
+                                     time: 'Ahora',
+                                     isRead: false,
+                                     color: '#ec4899',
+                                     icon: 'ri-customer-service-2-line',
+                                     leadId: lead.id,
+                                     phone: lead.phone
+                                   }
+                                 }))
+                               }
+                             } else if (lead.id) {
+                               await updateLead(lead.id, { status: 'HANDOFF', assigned_kam: selectedKam.name }, companyId)
+                               addLog(`Lead asignado a ${selectedKam.name}. Configura su teléfono para notificación WhatsApp.`, 'info')
+                               setSnackbar({ open: true, msg: `Asignación efectuada sin WhatsApp (falta número).`, severity: 'info' })
+                             } else {
+                               addLog(`Asignación efectuada a ${selectedKam.name}.`, 'info')
+                               setSnackbar({ open: true, msg: `Asignación efectuada de prueba.`, severity: 'info' })
+                             }
+                             setPendingHandoffLead(null)
+                           } catch (err) {
+                             addLog(`Error en handoff: ${err.message}`, 'alert')
+                             setSnackbar({ open: true, msg: `Error al notificar al KAM: Revise su número de WhatsApp.`, severity: 'error' })
+                             // Revertir actualización optimista
+                             setAllLeads(prev => prev.map(l => 
+                               l.name === lead.name ? { ...l, status: lead.status, assignedKam: lead.assignedKam } : l
+                             ))
+                           } finally {
+                             setLoadingState({ active: false, target: '' })
+                             setIsAssignModalOpen(false)
+                             setSelectedKam(null)
+                           }
+                        }}
+                     >
+                        {loadingState.active && loadingState.target === 'Handoff'
+                          ? <CircularProgress size={18} color="inherit" sx={{ mr: 1 }} />
+                          : null}
+                        ASIGNAR Y NOTIFICAR POR WHATSAPP
+                     </Button>
                   </DialogActions>
                </>
             );

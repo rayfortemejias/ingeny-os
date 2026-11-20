@@ -773,6 +773,66 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       }
     ]
 
+    // Pasos para el flujo de Equipo (KAMs), Auto-KAM y Handoff de Leads (Administrador)
+    const teamHandoffTourSteps = [
+      {
+        element: '#tour-tab-equipo',
+        popover: {
+          title: '👥 1. Centro Único de Equipo / Ejecutivos (KAMs)',
+          description: 'Esta pestaña es el <strong>único lugar centralizado</strong> donde administras a las personas que atenderán las videollamadas y cerrarán las ventas cuando el Agente SDR califique o agende un lead.',
+          side: 'bottom',
+          align: 'center'
+        }
+      },
+      {
+        element: '#tour-equipo-self-btn',
+        popover: {
+          title: '🙋‍♂️ 2. Opción A: "Agregarme a mí mismo"',
+          description: '¿Eres tú mismo quien atiende las reuniones y cierra los clientes? Haz clic aquí para pre-llenar tu nombre y correo de Administrador con 1 clic; solo ingresas tu WhatsApp y recibirás los leads agendados y los Briefs de la IA directo en tu celular.',
+          side: 'bottom',
+          align: 'end'
+        }
+      },
+      {
+        element: '#tour-equipo-new-btn',
+        popover: {
+          title: '➕ 3. Opción B: "Nuevo Ejecutivo" (Tu Equipo Comercial)',
+          description: 'Usa este botón para registrar a tus vendedores o especialistas (KAMs) con su WhatsApp, correo y contraseña. El sistema genera un <strong>Código de Invitación (INV-XXXXXX)</strong> y se los envía automáticamente por WhatsApp y Correo para que entren con su propia cuenta.',
+          side: 'bottom',
+          align: 'end'
+        }
+      },
+      {
+        element: '#tour-equipo-list',
+        popover: {
+          title: '🗂️ 4. Gestión de Ejecutivos y Retorno al Handoff',
+          description: 'Aquí verás a todos tus ejecutivos activos, su código de invitación y su carga de leads. Si llegaste aquí desde el botón <em>"Agregar Ejecutivo"</em> de un lead en la Sala de Guerra, cada tarjeta mostrará el botón <strong>"Elegir para Handoff"</strong> para volver directo a asignar ese lead en 1 clic.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#tour-auto-kam-btn',
+        popover: {
+          title: '🤖 5. Asignación Automática (Auto-KAM) vs. Manual',
+          description: 'Una vez registrado al menos 1 ejecutivo, controla aquí cómo se reparten los leads calificados/agendados:<br/><br/>' +
+            '• <strong>Auto-KAM Activo 🟢:</strong> El sistema asigna automáticamente al ejecutivo con menor carga y le envía el Brief por WhatsApp sin intervención manual.<br/>' +
+            '• <strong>Auto-KAM Manual 🟡:</strong> El lead queda con el botón <em>"ASIGNAR EJECUTIVO"</em> para que revises el Brief BANT en la Sala de Guerra y elijas al ejecutivo.',
+          side: 'bottom',
+          align: 'center'
+        }
+      },
+      {
+        element: '#tour-tab-inbox',
+        popover: {
+          title: '📥 6. Bandeja Compartida (INBOX) & Modo IA Supervisor',
+          description: 'Al ejecutarse el Handoff (manual o automático), el lead pasa a <strong>SEGUIMIENTO</strong> y aparece en el <strong>INBOX</strong> del ejecutivo asignado. Desde ese momento la IA se silencia en WhatsApp (Modo Supervisor) para que el humano tome el control de la relación y la videollamada en Google Meet.',
+          side: 'bottom',
+          align: 'center'
+        }
+      }
+    ]
+
     let tourSteps = generalTourSteps
     let defaultDoneText = '¡Comenzar! ✓'
 
@@ -788,6 +848,9 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
     } else if (tourType === 'leads') {
       tourSteps = leadsTourSteps
       defaultDoneText = '¡Dominado, Ir a Leads! 🎯'
+    } else if (tourType === 'team_handoff') {
+      tourSteps = teamHandoffTourSteps
+      defaultDoneText = '¡Entendido, Gestionar Equipo! 👥'
     } else if (tourType === 'command_center') {
       tourSteps = commandCenterTourSteps
       defaultDoneText = '¡Comenzar en el Command Center! 🚀'
@@ -866,7 +929,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
           if (tourType === 'whatsapp' && setIsWhatsappQrOpen) {
             setIsWhatsappQrOpen(false)
           }
-          if (tourType === 'leads' && setTourType) {
+          if ((tourType === 'leads' || tourType === 'team_handoff') && setTourType) {
             setTourType('general')
           }
           if (setRun) setRun(false)
@@ -879,6 +942,8 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
               localStorage.setItem('sdrWhatsappConnectedTourSeen', 'true')
             } else if (tourType === 'leads') {
               localStorage.setItem('sdrLeadsTourSeen', 'true')
+            } else if (tourType === 'team_handoff') {
+              localStorage.setItem('sdrTeamHandoffTourSeen', 'true')
             } else if (tourType === 'command_center') {
               localStorage.setItem('sdrCommandCenterTourSeen', 'true')
             } else {
