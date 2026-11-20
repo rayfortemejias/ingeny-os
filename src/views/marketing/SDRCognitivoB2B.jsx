@@ -619,6 +619,7 @@ const SDRCognitivoB2B = () => {
   const [liveChat, setLiveChat] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const [isAddingKam, setIsAddingKam] = useState(false)
+  const [showKamPassword, setShowKamPassword] = useState(false)
   const [editingKam, setEditingKam] = useState(null)
   const [kamCountryCode, setKamCountryCode] = useState('56')
   const [newKamData, setNewKamData] = useState({ name: '', role: '', phone: '', email: '', password: '', active: true, qrScanned: false })
@@ -5577,13 +5578,13 @@ return (
   }
 
   const handleSaveKam = async () => {
-    if (!newKamData.name || !newKamData.phone || !newKamData.email) {
-      setSnackbar({ open: true, msg: 'Nombre, Email y Teléfono son obligatorios', severity: 'warning' })
+    if (!newKamData.name?.trim() || !newKamData.role?.trim() || !newKamData.phone?.trim() || !newKamData.email?.trim()) {
+      setSnackbar({ open: true, msg: 'Todos los campos (Nombre, Rol, Teléfono y Email) son obligatorios', severity: 'warning' })
       return
     }
 
-    if (!editingKam && !newKamData.password) {
-      setSnackbar({ open: true, msg: 'La contraseña es obligatoria para nuevos ejecutivos', severity: 'warning' })
+    if (!editingKam && !newKamData.password?.trim()) {
+      setSnackbar({ open: true, msg: 'La contraseña de acceso es obligatoria para nuevos ejecutivos', severity: 'warning' })
       return
     }
 
@@ -5929,23 +5930,23 @@ return (
          {/* Modal Crear / Editar KAM */}
          <Dialog 
            open={isAddingKam} 
-           onClose={() => { setIsAddingKam(false); setEditingKam(null); }} 
+           onClose={() => { setIsAddingKam(false); setEditingKam(null); setShowKamPassword(false); }} 
            PaperProps={{ sx: { background: '#0f172a', border: '1px solid rgba(0,251,255,0.3)', borderRadius: '16px', color: '#fff', minWidth: { xs: '90vw', sm: '480px' } } }}
          >
            <DialogTitle sx={{ borderBottom: '1px solid rgba(255,255,255,0.1)', '& .MuiTypography-root': { fontWeight: 900, color: '#00fbff' } }}>
              {editingKam ? 'Editar Ejecutivo Comercial (KAM)' : 'Añadir Ejecutivo Comercial (KAM)'}
            </DialogTitle>
            <DialogContent sx={{ mt: 2 }}>
-             <TextField fullWidth label="Nombre Completo" variant="outlined" margin="normal" value={newKamData.name} onChange={(e) => setNewKamData({ ...newKamData, name: e.target.value })} InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' } }} InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} />
-             <TextField fullWidth label="Rol / Puesto" variant="outlined" margin="normal" placeholder="Ej. KAM Senior B2B" value={newKamData.role} onChange={(e) => setNewKamData({ ...newKamData, role: e.target.value })} InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' } }} InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} />
+             <TextField required fullWidth label="Nombre Completo" variant="outlined" margin="normal" value={newKamData.name} onChange={(e) => setNewKamData({ ...newKamData, name: e.target.value })} InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' } }} InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} />
+             <TextField required fullWidth label="Rol / Puesto" variant="outlined" margin="normal" placeholder="Ej. KAM Senior B2B" value={newKamData.role} onChange={(e) => setNewKamData({ ...newKamData, role: e.target.value })} InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' } }} InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} />
 
              {/* Combo Select de Código de País (Chile, Venezuela, Estados Unidos) */}
              <Box sx={{ mt: 2, mb: 1 }}>
                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', mb: 1, display: 'block', fontWeight: 700 }}>
-                 Número de WhatsApp (Notificaciones y Asignaciones)
+                 Número de WhatsApp (Notificaciones y Asignaciones) *
                </Typography>
                <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
-                 <FormControl sx={{ minWidth: '160px' }}>
+                 <FormControl required sx={{ minWidth: '160px' }}>
                    <InputLabel id="kam-country-select-label" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>País</InputLabel>
                    <Select
                      labelId="kam-country-select-label"
@@ -5971,6 +5972,7 @@ return (
                    </Select>
                  </FormControl>
                  <TextField 
+                   required
                    fullWidth 
                    label="Número telefónico" 
                    variant="outlined" 
@@ -5993,10 +5995,34 @@ return (
              </Box>
 
              <Typography variant="caption" sx={{ color: '#00fbff', mt: 2, display: 'block' }}>Credenciales de Acceso (Bandeja Compartida)</Typography>
-             <TextField fullWidth type="email" label="Email de Acceso" variant="outlined" margin="dense" value={newKamData.email} onChange={(e) => setNewKamData({ ...newKamData, email: e.target.value })} InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' } }} InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} />
+             <TextField required fullWidth type="email" label="Email de Acceso" variant="outlined" margin="dense" value={newKamData.email} onChange={(e) => setNewKamData({ ...newKamData, email: e.target.value })} InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' } }} InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} />
              
              {!editingKam ? (
-               <TextField fullWidth type="password" label="Contraseña de Acceso" variant="outlined" margin="dense" value={newKamData.password} onChange={(e) => setNewKamData({ ...newKamData, password: e.target.value })} InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' } }} InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} />
+               <TextField 
+                 required 
+                 fullWidth 
+                 type={showKamPassword ? 'text' : 'password'} 
+                 label="Contraseña de Acceso" 
+                 variant="outlined" 
+                 margin="dense" 
+                 value={newKamData.password} 
+                 onChange={(e) => setNewKamData({ ...newKamData, password: e.target.value })} 
+                 InputProps={{ 
+                   sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.05)' },
+                   endAdornment: (
+                     <IconButton
+                       onClick={() => setShowKamPassword(prev => !prev)}
+                       edge="end"
+                       size="small"
+                       sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { color: '#00fbff' } }}
+                       aria-label={showKamPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                     >
+                       <i className={showKamPassword ? 'ri-eye-off-line' : 'ri-eye-line'} style={{ fontSize: '18px' }}></i>
+                     </IconButton>
+                   )
+                 }} 
+                 InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }} 
+               />
              ) : (
                <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1.5, borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
                  <Box>
@@ -6012,8 +6038,13 @@ return (
              )}
            </DialogContent>
            <DialogActions sx={{ p: 3, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-             <Button onClick={() => { setIsAddingKam(false); setEditingKam(null); }} sx={{ color: 'rgba(255,255,255,0.5)' }}>Cancelar</Button>
-             <Button variant="contained" onClick={handleSaveKam} sx={{ bgcolor: '#00fbff', color: '#000', fontWeight: 900 }}>
+             <Button onClick={() => { setIsAddingKam(false); setEditingKam(null); setShowKamPassword(false); }} sx={{ color: 'rgba(255,255,255,0.5)' }}>Cancelar</Button>
+             <Button 
+               variant="contained" 
+               disabled={!newKamData.name?.trim() || !newKamData.role?.trim() || !newKamData.phone?.trim() || !newKamData.email?.trim() || (!editingKam && !newKamData.password?.trim())}
+               onClick={handleSaveKam} 
+               sx={{ bgcolor: '#00fbff', color: '#000', fontWeight: 900, '&.Mui-disabled': { bgcolor: 'rgba(0,251,255,0.2)', color: 'rgba(255,255,255,0.35)' } }}
+             >
                {editingKam ? 'Actualizar y Notificar' : 'Guardar Ejecutivo'}
              </Button>
            </DialogActions>
