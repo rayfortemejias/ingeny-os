@@ -4241,7 +4241,19 @@ return () => clearInterval(intervalId);
                                     }
                                  }}
                              >
-                                {(lead.assignedKam || lead.assigned_kam) ? `ASIGNADO A ${(lead.assignedKam || lead.assigned_kam).toUpperCase()}` : lead.status === 'POR AGENDAR ( CON INTERES )' ? 'ASIGNAR EJECUTIVO' : lead.status === 'EN CHAT' ? 'VER CHAT EN VIVO' : lead.status === 'AGENDADO' ? 'IR A HANDOFF' : lead.status === 'EN SEGUIMIENTO' ? 'IR A RADAR' : lead.status === 'DESCARTADO' ? 'VER MOTIVO' : lead.status === 'CERRADO' ? 'VER NEGOCIO' : 'VER PROSPECTO'}
+                                {lead.status === 'POR AGENDAR ( CON INTERES )'
+                                  ? ((lead.assignedKam || lead.assigned_kam) ? 'GESTIONAR HANDOFF' : 'ASIGNAR EJECUTIVO')
+                                  : lead.status === 'EN CHAT'
+                                    ? 'VER CHAT EN VIVO'
+                                    : lead.status === 'AGENDADO'
+                                      ? 'VER DETALLE / GESTIONAR'
+                                      : lead.status === 'EN SEGUIMIENTO'
+                                        ? 'VER SEGUIMIENTO'
+                                        : lead.status === 'DESCARTADO'
+                                          ? 'VER MOTIVO'
+                                          : lead.status === 'CERRADO'
+                                            ? 'VER NEGOCIO'
+                                            : 'VER DETALLES'}
                              </Button>
                              {lead.status !== 'EN CHAT' && (
                                 <Button size="small" variant="outlined" onClick={() => { setSelectedLead(lead); setIsChatModalOpen(true); }} sx={{ minWidth: '40px', color: lead.status === 'POR AGENDAR ( CON INTERES )' ? '#fff' : lead.color, borderColor: lead.status === 'POR AGENDAR ( CON INTERES )' ? 'rgba(255,255,255,0.3)' : lead.color, '&:hover': { bgcolor: alpha(lead.color, 0.1) } }} title="Ver Conversación">
