@@ -5636,7 +5636,7 @@ return (
         } : k)))
 
         // Enviar correo de notificación
-        await sendKamInviteEmail({
+        const emailRes = await sendKamInviteEmail({
           email: updatePayload.email,
           name: updatePayload.name,
           role: updatePayload.role,
@@ -5645,12 +5645,21 @@ return (
           isEdit: true
         })
 
-        addLog(`Ejecutivo ${updatePayload.name} actualizado. Notificaciones enviadas por WhatsApp y Correo ✓`, 'success')
-        setSnackbar({ 
-          open: true, 
-          msg: `Ejecutivo actualizado. Notificaciones enviadas a WhatsApp y correo ${updatePayload.email} ✓`, 
-          severity: 'success' 
-        })
+        if (emailRes && emailRes.success) {
+          addLog(`Ejecutivo ${updatePayload.name} actualizado. Notificaciones enviadas por WhatsApp y Correo ✓`, 'success')
+          setSnackbar({ 
+            open: true, 
+            msg: `Ejecutivo actualizado. Notificaciones enviadas a WhatsApp y correo ${updatePayload.email} ✓`, 
+            severity: 'success' 
+          })
+        } else {
+          addLog(`Ejecutivo ${updatePayload.name} actualizado, pero falló el correo: ${emailRes?.error || 'error SMTP'}`, 'alert')
+          setSnackbar({ 
+            open: true, 
+            msg: `Ejecutivo actualizado, pero no se pudo enviar el correo a ${updatePayload.email} (${emailRes?.error || 'revisar SMTP'})`, 
+            severity: 'warning' 
+          })
+        }
       } else {
         // MODO CREACIÓN
         const response = await createKamUser({ 
@@ -5673,7 +5682,7 @@ return (
           }
 
           // Enviar correo de invitación
-          await sendKamInviteEmail({
+          const emailRes = await sendKamInviteEmail({
             email: newKam.email || newKamData.email.trim(),
             name: newKam.name || newKamData.name.trim(),
             role: newKam.role || newKamData.role || 'KAM B2B',
@@ -5682,12 +5691,21 @@ return (
             isEdit: false
           })
 
-          addLog(`Ejecutivo ${newKamData.name} guardado. Notificaciones enviadas por WhatsApp y Correo ✓`, 'success')
-          setSnackbar({ 
-            open: true, 
-            msg: `Ejecutivo creado. Invitación enviada por WhatsApp y correo ${newKam.email || newKamData.email} ✓`, 
-            severity: 'success' 
-          })
+          if (emailRes && emailRes.success) {
+            addLog(`Ejecutivo ${newKamData.name} guardado. Notificaciones enviadas por WhatsApp y Correo ✓`, 'success')
+            setSnackbar({ 
+              open: true, 
+              msg: `Ejecutivo creado. Invitación enviada por WhatsApp y correo ${newKam.email || newKamData.email} ✓`, 
+              severity: 'success' 
+            })
+          } else {
+            addLog(`Ejecutivo ${newKamData.name} guardado, pero falló el correo: ${emailRes?.error || 'error SMTP'}`, 'alert')
+            setSnackbar({ 
+              open: true, 
+              msg: `Ejecutivo creado, pero falló el envío de correo a ${newKam.email || newKamData.email} (${emailRes?.error || 'revisar SMTP'})`, 
+              severity: 'warning' 
+            })
+          }
         } else {
           throw new Error('Error al registrar usuario')
         }
@@ -5885,19 +5903,28 @@ return (
                                try {
                                  const targetId = kam.id || kam.ID
                                  const res = await resendKamInvite(targetId, companyId)
-                                 if (res && res.invite_code) {
-                                   setKamsList(prev => prev.map(k => ((k.id || k.ID) === targetId) ? { ...k, invite_code: res.invite_code, invite_status: 'PENDING' } : k))
+                                 const newInviteCode = res?.data?.invite_code || res?.invite_code
+                                 if (newInviteCode) {
+                                   setKamsList(prev => prev.map(k => ((k.id || k.ID) === targetId) ? { ...k, invite_code: newInviteCode, invite_status: 'PENDING' } : k))
+                                   let emailOk = true
                                    if (kam.email) {
-                                     sendKamInviteEmail({
+                                     const emailRes = await sendKamInviteEmail({
                                        email: kam.email,
                                        name: kam.name,
                                        role: kam.role,
                                        companyName: brainData.businessName || companyId,
-                                       inviteCode: res.invite_code,
+                                       inviteCode: newInviteCode,
                                        isEdit: false
                                      })
+                                     emailOk = Boolean(emailRes?.success)
                                    }
-                                   setSnackbar({ open: true, msg: `Nuevo código ${res.invite_code} generado y enviado por WhatsApp y Correo ✓`, severity: 'success' })
+                                   setSnackbar({
+                                     open: true,
+                                     msg: emailOk
+                                       ? `Nuevo código ${newInviteCode} generado y enviado por WhatsApp y Correo ✓`
+                                       : `Nuevo código ${newInviteCode} generado por WhatsApp, pero falló el envío por Correo`,
+                                     severity: emailOk ? 'success' : 'warning'
+                                   })
                                  }
                                } catch (err) {
                                  setSnackbar({ open: true, msg: 'Error al reenviar invitación', severity: 'error' })
