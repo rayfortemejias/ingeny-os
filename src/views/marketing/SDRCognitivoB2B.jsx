@@ -23,7 +23,7 @@ import {
   updateLead, getConversations, checkBackendHealth, mapLeadFromDB, STATUS_MAP_REVERSE, getLocalCompanyId,
   extractKnowledgeFile, extractKnowledgeUrl, uploadFileToStorage, validateCompanyConfigWithAI,
   createKamUser, fetchInboxLeads, sendHumanMessage, getCalendarStatus, resendKamInvite,
-  updateKam, sendKamInviteEmail, syncLeadMeetingCalendar
+  updateKam, sendKamInviteEmail, syncLeadMeetingCalendar, reportLeadNoShow
 } from '@/hooks/useSdrBackend'
 
 
@@ -614,6 +614,10 @@ const SDRCognitivoB2B = () => {
   const [selectedClosedLead, setSelectedClosedLead] = useState(null)
   const [handoffResult, setHandoffResult] = useState("")
   const [handoffFeedback, setHandoffFeedback] = useState("")
+  const [noShowReopenAI, setNoShowReopenAI] = useState(true)
+  const [isEditingLeadInfo, setIsEditingLeadInfo] = useState(false)
+  const [editLeadForm, setEditLeadForm] = useState({ name: '', role: '', company: '' })
+  const [isSavingLeadInfo, setIsSavingLeadInfo] = useState(false)
   const [isAnalyzingHandoff, setIsAnalyzingHandoff] = useState(false)
   const [handoffAnalysis, setHandoffAnalysis] = useState(null)
   const [liveChat, setLiveChat] = useState([])
@@ -4937,7 +4941,7 @@ return (
     return (
       <Dialog 
          open={isHandoffModalOpen} 
-         onClose={() => setIsHandoffModalOpen(false)}
+         onClose={() => { setIsHandoffModalOpen(false); setIsEditingLeadInfo(false); }}
          maxWidth="xl"
          fullWidth
          PaperProps={{
@@ -4958,16 +4962,104 @@ return (
                {/* Columna Izquierda: Detalles del Lead y Tiempos */}
                <Grid item xs={12} md={7}>
                   <NeuralCard sx={{ p: 4, height: '100%', borderLeft: `4px solid ${lead.color || '#00fbff'}` }}>
-                     <Typography variant="subtitle2" sx={{ color: 'rgba(255,255,255,0.7)', fontWeight: 900, mb: 3 }}>
-                        <i className="ri-profile-line"></i> SITUACIÓN DEL LEAD
-                     </Typography>
-                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                        <Box>
-                           <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff' }}>{lead.name}</Typography>
-                           <Typography variant="subtitle1" sx={{ color: 'rgba(255,255,255,0.7)' }}>{lead.role} en {lead.company}</Typography>
-                        </Box>
-                        <Chip label={`SCORE ${lead.score}/100`} sx={{ bgcolor: alpha(lead.color || '#00fbff', 0.2), color: lead.color || '#00fbff', fontWeight: 900 }} />
+                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ color: 'rgba(255,255,255,0.7)', fontWeight: 900 }}>
+                           <i className="ri-profile-line"></i> SITUACIÓN DEL LEAD
+                        </Typography>
+                        {!isEditingLeadInfo && (
+                           <Button
+                              size="small"
+                              variant="text"
+                              startIcon={<i className="ri-edit-line" style={{ fontSize: '0.9rem' }}></i>}
+                              onClick={() => {
+                                 setEditLeadForm({
+                                    name: lead.name && lead.name !== 'Usuario desconocido' ? lead.name : '',
+                                    role: lead.role && lead.role !== 'Rol desconocido' ? lead.role : '',
+                                    company: lead.company && lead.company !== 'Empresa desconocida' ? lead.company : ''
+                                 });
+                                 setIsEditingLeadInfo(true);
+                              }}
+                              sx={{ color: '#00fbff', fontWeight: 800, fontSize: '0.75rem', textTransform: 'none', py: 0.25 }}
+                           >
+                              Editar datos
+                           </Button>
+                        )}
                      </Box>
+                     {isEditingLeadInfo ? (
+                        <Box sx={{ mb: 3, p: 2, bgcolor: 'rgba(0,251,255,0.05)', borderRadius: '10px', border: '1px solid rgba(0,251,255,0.25)' }}>
+                           <Stack spacing={1.5}>
+                              <TextField
+                                 size="small"
+                                 fullWidth
+                                 label="Nombre del Lead"
+                                 value={editLeadForm.name}
+                                 onChange={(e) => setEditLeadForm(prev => ({ ...prev, name: e.target.value }))}
+                                 InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(0,0,0,0.3)' } }}
+                                 InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
+                              />
+                              <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                 <TextField
+                                    size="small"
+                                    fullWidth
+                                    label="Rol / Cargo"
+                                    value={editLeadForm.role}
+                                    onChange={(e) => setEditLeadForm(prev => ({ ...prev, role: e.target.value }))}
+                                    InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(0,0,0,0.3)' } }}
+                                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
+                                 />
+                                 <TextField
+                                    size="small"
+                                    fullWidth
+                                    label="Empresa"
+                                    value={editLeadForm.company}
+                                    onChange={(e) => setEditLeadForm(prev => ({ ...prev, company: e.target.value }))}
+                                    InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(0,0,0,0.3)' } }}
+                                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
+                                 />
+                              </Box>
+                              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                                 <Button size="small" onClick={() => setIsEditingLeadInfo(false)} sx={{ color: 'rgba(255,255,255,0.6)' }}>
+                                    Cancelar
+                                 </Button>
+                                 <Button
+                                    size="small"
+                                    variant="contained"
+                                    disabled={isSavingLeadInfo || !editLeadForm.name.trim()}
+                                    onClick={async () => {
+                                       const cleanName = editLeadForm.name.trim();
+                                       const cleanRole = editLeadForm.role.trim() || 'Rol desconocido';
+                                       const cleanCompany = editLeadForm.company.trim() || 'Empresa desconocida';
+                                       setIsSavingLeadInfo(true);
+                                       try {
+                                          if (lead.id) {
+                                             await updateLead(lead.id, { name: cleanName, role: cleanRole, company: cleanCompany }, companyId);
+                                          }
+                                          setAllLeads(prev => prev.map(l => (lead.id ? l.id === lead.id : l.phone === lead.phone) ? { ...l, name: cleanName, role: cleanRole, company: cleanCompany } : l));
+                                          setSelectedLead(prev => prev ? { ...prev, name: cleanName, role: cleanRole, company: cleanCompany } : prev);
+                                          setIsEditingLeadInfo(false);
+                                          setSnackbar({ open: true, msg: `Datos del lead actualizados (${cleanName}) ✓`, severity: 'success' });
+                                       } catch (err) {
+                                          setSnackbar({ open: true, msg: `Error al actualizar datos: ${err.message}`, severity: 'error' });
+                                       } finally {
+                                          setIsSavingLeadInfo(false);
+                                       }
+                                    }}
+                                    sx={{ bgcolor: '#00fbff', color: '#000', fontWeight: 900 }}
+                                 >
+                                    {isSavingLeadInfo ? 'Guardando...' : 'Guardar'}
+                                 </Button>
+                              </Box>
+                           </Stack>
+                        </Box>
+                     ) : (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+                           <Box>
+                              <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff' }}>{lead.name}</Typography>
+                              <Typography variant="subtitle1" sx={{ color: 'rgba(255,255,255,0.7)' }}>{lead.role} en {lead.company}</Typography>
+                           </Box>
+                           <Chip label={`SCORE ${lead.score}/100`} sx={{ bgcolor: alpha(lead.color || '#00fbff', 0.2), color: lead.color || '#00fbff', fontWeight: 900 }} />
+                        </Box>
+                     )}
                      
                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 4 }}>
                         <Box sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.1)' }}>
@@ -5074,9 +5166,31 @@ return (
                               <MenuItem value="" disabled sx={{ color: 'rgba(255,255,255,0.5)' }}>Selecciona un resultado...</MenuItem>
                               <MenuItem value="cerrado_ganado" sx={{ color: '#10b981', fontWeight: 900 }}>🎉 Cerrado Ganado (Venta)</MenuItem>
                               <MenuItem value="seguimiento" sx={{ color: '#666cff', fontWeight: 900 }}>📅 Requiere Segunda Reunión</MenuItem>
+                              <MenuItem value="no_show" sx={{ color: '#f59e0b', fontWeight: 900 }}>⚠️ No asistió (No-Show)</MenuItem>
                               <MenuItem value="cerrado_perdido" sx={{ color: '#ef4444', fontWeight: 900 }}>❌ Cerrado Perdido (Descartado)</MenuItem>
                            </Select>
                         </Box>
+
+                        {handoffResult === 'no_show' && (
+                           <Box sx={{ mb: 2, p: 1.5, borderRadius: '8px', bgcolor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.35)' }}>
+                              <FormControlLabel
+                                 control={
+                                    <Checkbox
+                                       checked={noShowReopenAI}
+                                       onChange={(e) => setNoShowReopenAI(e.target.checked)}
+                                       size="small"
+                                       sx={{ color: '#f59e0b', '&.Mui-checked': { color: '#f59e0b' } }}
+                                    />
+                                 }
+                                 label={
+                                    <Typography variant="caption" sx={{ color: '#fff', fontWeight: 700 }}>
+                                       Reabrir lead y enviar WhatsApp para que la IA reagende automáticamente
+                                    </Typography>
+                                 }
+                                 sx={{ m: 0 }}
+                              />
+                           </Box>
+                        )}
 
                         <TextField 
                            fullWidth 
@@ -5103,12 +5217,35 @@ return (
                            variant="contained" 
                            disabled={!handoffResult}
                            onClick={async () => {
+                              if (handoffResult === 'no_show') {
+                                const newStatus = noShowReopenAI ? 'EN CHAT' : 'EN SEGUIMIENTO';
+                                setAllLeads(prev => prev.map(l => (lead.id ? l.id === lead.id : l.phone === lead.phone) ? { ...l, status: newStatus } : l));
+                                if (lead.id) {
+                                  try {
+                                    await reportLeadNoShow(lead.id, companyId, noShowReopenAI, handoffFeedback);
+                                    addLog(noShowReopenAI ? 'No-Show registrado: WhatsApp enviado y IA reactivada para reagendar ✓' : 'No-Show registrado: lead movido a Seguimiento ✓', 'success');
+                                  } catch (err) {
+                                    addLog(`Error al registrar No-Show: ${err.message}`, 'alert');
+                                  }
+                                }
+                                setIsHandoffModalOpen(false);
+                                setIsEditingLeadInfo(false);
+                                setHandoffResult("");
+                                setHandoffFeedback("");
+                                triggerAction(
+                                  'No-Show Registrado',
+                                  noShowReopenAI ? 'Se envió WhatsApp al lead y la IA fue reactivada para reagendar.' : 'Lead movido a Seguimiento tras No-Show.',
+                                  noShowReopenAI ? 0 : 1
+                                );
+                                return;
+                              }
+
                               const newStatus = handoffResult === 'cerrado_ganado' ? 'CERRADO' : handoffResult === 'seguimiento' ? 'EN SEGUIMIENTO' : 'DESCARTADO';
                               const backendStatus = handoffResult === 'cerrado_ganado' ? 'CERRADO' : handoffResult === 'seguimiento' ? 'EN_SEGUIMIENTO' : 'DESCALIFICADO';
 
 
                               // Actualizar UI
-                              setAllLeads(prev => prev.map(l => l.name === lead.name ? { ...l, status: newStatus } : l));
+                              setAllLeads(prev => prev.map(l => (lead.id ? l.id === lead.id : l.name === lead.name) ? { ...l, status: newStatus } : l));
 
 
                               // Persistir en backend si el lead tiene ID real
@@ -5122,13 +5259,16 @@ return (
                               }
 
                               setIsHandoffModalOpen(false);
+                              setIsEditingLeadInfo(false);
                               setHandoffResult("");
                               setHandoffFeedback("");
                               triggerAction('Retroalimentación Neural', `Feedback guardado. Lead movido a ${newStatus}.`, newStatus === 'CERRADO' ? 3 : newStatus === 'EN SEGUIMIENTO' ? 1 : 2);
                            }}
                            sx={{ bgcolor: '#f59e0b', color: '#000', fontWeight: 900, '&:hover': { bgcolor: '#d97706' }, '&.Mui-disabled': { bgcolor: 'rgba(245, 158, 11, 0.3)', color: 'rgba(255,255,255,0.3)' } }}
                         >
-                           GUARDAR Y CERRAR NEGOCIO
+                           {handoffResult === 'no_show'
+                              ? (noShowReopenAI ? 'REABRIR PARA IA Y ENVIAR WHATSAPP' : 'REGISTRAR NO-SHOW EN SEGUIMIENTO')
+                              : 'GUARDAR Y CERRAR NEGOCIO'}
                         </Button>
                      </NeuralCard>
                   </Stack>

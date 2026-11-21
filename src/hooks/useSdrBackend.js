@@ -417,6 +417,23 @@ export async function syncLeadMeetingCalendar(leadId, companyId) {
   })
 }
 
+/**
+ * Registra un No-Show y opcionalmente reabre el lead enviando WhatsApp para que la IA reagende
+ */
+export async function reportLeadNoShow(leadId, companyId, reopenForAi = true, feedback = '') {
+  const cid = companyId || getLocalCompanyId();
+  return apiFetch(`${BACKEND_URL}/api/leads/no-show`, {
+    method: 'POST',
+    headers: defaultHeaders(companyId),
+    body: JSON.stringify({
+      lead_id: leadId,
+      company_id: cid,
+      reopen_for_ai: Boolean(reopenForAi),
+      feedback: feedback || '',
+    }),
+  })
+}
+
 // ─── Handoff ─────────────────────────────────────────────────────────────────
 
 /**
