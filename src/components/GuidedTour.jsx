@@ -310,7 +310,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         element: '#tour-badges-info',
         popover: {
           title: '💎 Modelos Tácticos & Inteligencia',
-          description: 'El agente opera con <strong>Hermes 3 (405B)</strong> para máxima obediencia comercial y cero censura, complementado con <strong>Apollo.io</strong> para enriquecer el email de cada prospecto, detectando su cargo y tamaño de empresa en tiempo real.',
+          description: 'El agente opera con un motor cognitivo avanzado de alta precisión comercial para mantener conversaciones naturales, calificar prospectos y agendar citas con cero improvisación.',
           side: 'bottom',
           align: 'end'
         }
@@ -557,8 +557,8 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       {
         element: '#tour-first-lead-card',
         popover: {
-          title: '💎 Ficha del Prospecto & Inteligencia Apollo',
-          description: 'Cada tarjeta reúne la inteligencia del contacto: nombre, teléfono, fecha y cargo enriquecido en tiempo real con <strong>Apollo.io</strong> (empresa, cargo del tomador de decisión y volumen de empleados).',
+          title: '💎 Ficha del Prospecto & Inteligencia Comercial',
+          description: 'Cada tarjeta reúne la información clave del contacto: nombre, teléfono, fecha, interés detectado y progreso comercial en tiempo real.',
           side: 'top',
           align: 'center'
         }

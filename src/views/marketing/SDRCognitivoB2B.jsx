@@ -2425,14 +2425,6 @@ const SDRCognitivoB2B = () => {
 
             {brainSetupStep === 6 && (
               <Box sx={{ animation: `${fadeIn} 0.3s` }}>
-                <Box sx={{ mb: 4, p: 2, borderRadius: '12px', background: 'linear-gradient(90deg, rgba(234,179,8,0.1) 0%, rgba(234,179,8,0.02) 100%)', border: '1px solid rgba(234,179,8,0.3)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <i className="ri-vip-diamond-fill" style={{ color: '#eab308', fontSize: '2rem' }}></i>
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ color: '#eab308', fontWeight: 900 }}>⚡ Inteligencia Comercial Integrada</Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>Tu Agente ya está conectado nativamente con <strong>Apollo.io</strong>. Si el lead provee un email, la IA investigará automáticamente el tamaño de su empresa y su cargo para hiper-personalizar la conversación.</Typography>
-                  </Box>
-                </Box>
-
                 {(() => {
                   const isEligible = isNicheCalendarEligible(brainData.industry, brainData.niche, brainData.offer, brainData.services, brainData.useCase);
                   const isGoogleUser = Boolean(session?.user?.isGoogleAuth || session?.user?.provider === 'google');
@@ -4591,7 +4583,7 @@ const SDRCognitivoB2B = () => {
                     {enriched.apollo_insights && (
                       <Box sx={{ p: 2, bgcolor: 'rgba(255,204,0,0.1)', borderRadius: '8px', borderLeft: '3px solid #ffcc00' }}>
                         <Typography variant="caption" sx={{ color: '#ffcc00', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          <i className="ri-vip-diamond-fill"></i> Inteligencia Apollo
+                          <i className="ri-vip-diamond-fill"></i> Inteligencia Comercial
                         </Typography>
                         <Typography variant="body2" sx={{ color: '#fff', fontWeight: 600 }}>{enriched.apollo_insights}</Typography>
                       </Box>
@@ -7055,35 +7047,6 @@ const SDRCognitivoB2B = () => {
                             borderRadius: '18px',
                             cursor: 'help',
                             boxShadow: '0 0 10px rgba(249, 115, 22, 0.15)',
-                            '& .MuiChip-icon': { fontSize: '1rem', ml: 1 }
-                          }}
-                        />
-                      </Tooltip>
-
-                      <Tooltip title={
-                        <Box sx={{ p: 0.5 }}>
-                          <Typography variant="subtitle2" sx={{ color: '#eab308', fontWeight: 900, mb: 0.5 }}>Inteligencia Comercial Activa</Typography>
-                          <Typography variant="body2" sx={{ color: '#475569', fontWeight: 500, lineHeight: 1.4 }}>El Agente SDR utiliza Apollo.io nativamente para analizar el email del prospecto y extraer en tiempo real el tamaño de su empresa y su cargo B2B, permitiendo respuestas hiper-personalizadas.</Typography>
-                        </Box>
-                      } arrow placement="bottom">
-                        <Chip
-                          icon={<i className="ri-radar-line" style={{ color: '#eab308', fontSize: '1.1rem' }}></i>}
-                          label={
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Apollo Inteligencia</Box>
-                              <Box sx={{ display: { xs: 'block', sm: 'none' } }}>Apollo</Box>
-                              <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 5px #10b981', ml: 0.5 }} />
-                            </Box>
-                          }
-                          sx={{
-                            bgcolor: 'rgba(234,179,8,0.1)',
-                            color: '#eab308',
-                            border: '1px solid rgba(234,179,8,0.4)',
-                            fontWeight: 800,
-                            height: '36px',
-                            borderRadius: '18px',
-                            cursor: 'help',
-                            boxShadow: '0 0 10px rgba(234,179,8,0.15)',
                             '& .MuiChip-icon': { fontSize: '1rem', ml: 1 }
                           }}
                         />
