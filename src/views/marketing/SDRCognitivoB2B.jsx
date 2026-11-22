@@ -3807,10 +3807,10 @@ const SDRCognitivoB2B = () => {
                         <i className="ri-checkbox-circle-line" style={{ color: '#25D366', marginRight: '10px', fontSize: '1.2rem' }}></i> Sincronización instantánea (10s)
                       </Typography>
                       <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.95)', display: 'flex', alignItems: 'center', mb: 1.8, fontWeight: 500 }}>
-                        <i className="ri-checkbox-circle-line" style={{ color: '#25D366', marginRight: '10px', fontSize: '1.2rem' }}></i> Uso gratuito de mensajería (Sin API)
+                        <i className="ri-checkbox-circle-line" style={{ color: '#25D366', marginRight: '10px', fontSize: '1.2rem' }}></i> Integración rápida sin códigos adicionales
                       </Typography>
                       <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.95)', display: 'flex', alignItems: 'center', mb: 1.8, fontWeight: 500 }}>
-                        <i className="ri-checkbox-circle-line" style={{ color: '#25D366', marginRight: '10px', fontSize: '1.2rem' }}></i> Ideal para pruebas piloto y startups
+                        <i className="ri-checkbox-circle-line" style={{ color: '#25D366', marginRight: '10px', fontSize: '1.2rem' }}></i> Startups y PyMEs
                       </Typography>
                       <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.95)', display: 'flex', alignItems: 'center', fontWeight: 500 }}>
                         <i className="ri-checkbox-circle-line" style={{ color: '#25D366', marginRight: '10px', fontSize: '1.2rem' }}></i> Configuración cero burocracia
