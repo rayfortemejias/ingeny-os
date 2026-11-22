@@ -668,7 +668,25 @@ const SDRCognitivoB2B = () => {
   const [isUploading, setIsUploading] = useState(false)
   const [calendarStatus, setCalendarStatus] = useState({ connected: false, autoScheduleEnabled: false, email: '', loading: false })
   const [calendarAlertDismissed, setCalendarAlertDismissed] = useState(false)
+  const [calendarJustLinkedBanner, setCalendarJustLinkedBanner] = useState(false)
   const [isCalendarSaving, setIsCalendarSaving] = useState(false)
+
+  // Mostrar aviso de confirmación cuando el usuario regresa de vincular Google Calendar
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const isGoogle = Boolean(session?.user?.isGoogleAuth || session?.user?.provider === 'google')
+    const isLinkedNow = isGoogle && (calendarStatus.connected || Boolean(session?.user?.calendarConnected))
+    if (isLinkedNow && localStorage.getItem('sdr_calendar_just_linked_banner') === 'true') {
+      localStorage.removeItem('sdr_calendar_just_linked_banner')
+      setCalendarJustLinkedBanner(true)
+      setSnackbar({
+        open: true,
+        msg: '✅ ¡Google Calendar vinculado! Recuerda que puedes activarlo o pausarlo cuando quieras desde el botón de Calendario abajo.',
+        severity: 'success'
+      })
+      addLog('Google Calendar vinculado con éxito. Puedes activarlo o pausarlo desde el botón de Calendario.', 'success')
+    }
+  }, [session, calendarStatus.connected])
   const [isKamSaving, setIsKamSaving] = useState(false)
 
   // Sincronización reactiva inmediata del nombre de empresa hacia el Header y Perfil
@@ -734,6 +752,7 @@ const SDRCognitivoB2B = () => {
         localStorage.setItem('sdr_resume_config_tab', '7');
         localStorage.setItem('sdr_resume_config_step', String(step || brainSetupStep || 6));
         localStorage.setItem('sdr_calendar_just_linked', 'true');
+        localStorage.setItem('sdr_calendar_just_linked_banner', 'true');
         if (companyId) {
           localStorage.setItem(`sdr_brain_config_draft_${companyId}`, JSON.stringify(brainData));
         }
@@ -6964,7 +6983,10 @@ const SDRCognitivoB2B = () => {
                   <Button
                     variant="contained"
                     size="small"
-                    onClick={() => signIn('google-calendar', { callbackUrl: window.location.href })}
+                    onClick={() => {
+                      try { localStorage.setItem('sdr_calendar_just_linked_banner', 'true'); } catch {}
+                      signIn('google-calendar', { callbackUrl: window.location.href });
+                    }}
                     sx={{
                       background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                       color: '#000',
@@ -6996,6 +7018,46 @@ const SDRCognitivoB2B = () => {
                     <i className="ri-close-line" style={{ fontSize: '18px' }}></i>
                   </IconButton>
                 </Box>
+              </Box>
+            </Grid>
+          )}
+          {!isExecutive && calendarJustLinkedBanner && (
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  background: 'linear-gradient(90deg, rgba(16, 185, 129, 0.16) 0%, rgba(0, 251, 255, 0.1) 50%, rgba(16, 185, 129, 0.16) 100%)',
+                  border: '1px solid rgba(16, 185, 129, 0.5)',
+                  borderRadius: '14px',
+                  p: { xs: 2, md: 2.5 },
+                  display: 'flex',
+                  flexDirection: { xs: 'column', md: 'row' },
+                  alignItems: { xs: 'flex-start', md: 'center' },
+                  justifyContent: 'space-between',
+                  gap: 2,
+                  boxShadow: '0 8px 28px rgba(16, 185, 129, 0.15)'
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ width: 42, height: 42, borderRadius: '12px', bgcolor: 'rgba(16, 185, 129, 0.2)', border: '1px solid rgba(16, 185, 129, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <i className="ri-calendar-check-fill" style={{ fontSize: '1.4rem', color: '#10b981' }}></i>
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ color: '#fff', fontWeight: 900, lineHeight: 1.2 }}>
+                      ✅ ¡Google Calendar vinculado con éxito!
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)', mt: 0.4 }}>
+                      Tu cuenta ya está conectada. Recuerda que <strong>vincular</strong> y <strong>activar</strong> son pasos distintos: ahora puedes activar o pausar el agendamiento automático según tu gusto en el botón <strong>«Calendario Activo / Calendario Pausado»</strong> que aparece abajo.
+                    </Typography>
+                  </Box>
+                </Box>
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => setCalendarJustLinkedBanner(false)}
+                  sx={{ bgcolor: '#10b981', color: '#000', fontWeight: 900, textTransform: 'none', borderRadius: '18px', px: 2.5, flexShrink: 0, '&:hover': { bgcolor: '#059669' } }}
+                >
+                  Entendido
+                </Button>
               </Box>
             </Grid>
           )}
@@ -7337,7 +7399,10 @@ const SDRCognitivoB2B = () => {
                                     <Button
                                       size="small"
                                       variant="outlined"
-                                      onClick={() => signIn('google-calendar', { callbackUrl: window.location.href })}
+                                      onClick={() => {
+                      try { localStorage.setItem('sdr_calendar_just_linked_banner', 'true'); } catch {}
+                      signIn('google-calendar', { callbackUrl: window.location.href });
+                    }}
                                       sx={{
                                         border: '1px solid rgba(245, 158, 11, 0.6)',
                                         background: 'rgba(245, 158, 11, 0.08)',
@@ -8633,7 +8698,10 @@ const SDRCognitivoB2B = () => {
                     <Button
                       variant="contained"
                       fullWidth
-                      onClick={() => signIn('google-calendar', { callbackUrl: window.location.href })}
+                      onClick={() => {
+                      try { localStorage.setItem('sdr_calendar_just_linked_banner', 'true'); } catch {}
+                      signIn('google-calendar', { callbackUrl: window.location.href });
+                    }}
                       sx={{
                         background: 'linear-gradient(90deg, #ec4899, #8b5cf6)',
                         color: '#fff',
