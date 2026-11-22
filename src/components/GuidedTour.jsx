@@ -321,7 +321,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         element: '#tour-card-ingesta',
         popover: {
           title: '📁 Card: Ingesta de Datos (Paso Inicial Obligatorio)',
-          description: '<strong>Paso Obligatorio Inicial:</strong> Esta tarjeta es el punto de partida indispensable antes de que el agente pueda ver leads y comenzar a prospectar. Aquí realizas por primera vez la ingesta de conocimiento de tu empresa: subes tus documentos oficiales (catálogos, precios, PDFs, FAQs y reglas comerciales) para entrenar al SDR y garantizar que responda con datos reales y sin inventar información.',
+          description: '<strong>Formulario Obligatorio Inicial:</strong> Completar el formulario de configuración de esta tarjeta es indispensable antes de que el agente pueda ver leads y comenzar a prospectar. <strong>Los documentos son opcionales</strong> (puedes subir catálogos, precios, PDFs o FAQs si lo deseas), y <strong>también puedes vincular tu página web (URL)</strong> para entrenar al SDR con información real de tu negocio y garantizar que responda sin inventar datos.',
           side: 'top',
           align: 'start'
         }
