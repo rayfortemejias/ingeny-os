@@ -8,7 +8,7 @@ const generateEmailTemplate = (url, email) => {
     <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0F172A; color: #F8FAFC; padding: 40px; border-radius: 12px; border: 1px solid #1E293B;">
       <div style="text-align: center; margin-bottom: 30px;">
         <h2 style="color: #00fbff; font-size: 28px; font-weight: 800; margin: 0 0 10px 0; letter-spacing: -0.5px;">Nodepath</h2>
-        <h1 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">Acceso al Command Center</h1>
+        <h1 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">Acceso al Dashboard</h1>
       </div>
       <div style="background-color: #1E293B; border-radius: 8px; padding: 30px; text-align: center; border: 1px solid #334155;">
         <p style="color: #CBD5E1; font-size: 15px; line-height: 1.6; margin-bottom: 30px;">
@@ -90,8 +90,8 @@ export async function POST(request) {
     await transporter.sendMail({
       from: `"Nodepath Cognitive Systems" <${process.env.SMTP_FROM || process.env.SMTP_USER || 'no-reply@nodepath.systems'}>`,
       to: email,
-      subject: 'Tu enlace de acceso al Command Center',
-      text: `Hola, hemos recibido una solicitud de acceso al Command Center de Nodepath desde tu correo (${email}). \n\nCopia y pega este enlace en tu navegador para iniciar sesión: \n${magicLinkUrl} \n\nSi no solicitaste este correo, puedes ignorarlo de forma segura.`,
+      subject: 'Tu enlace de acceso al Dashboard',
+      text: `Hola, hemos recibido una solicitud de acceso al Dashboard de Nodepath desde tu correo (${email}). \n\nCopia y pega este enlace en tu navegador para iniciar sesión: \n${magicLinkUrl} \n\nSi no solicitaste este correo, puedes ignorarlo de forma segura.`,
       html: generateEmailTemplate(magicLinkUrl, email)
     });
 

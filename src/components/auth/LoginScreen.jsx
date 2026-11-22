@@ -92,7 +92,7 @@ const LoginScreen = () => {
                 <Logo scale={1.2} hideText={true} />
               </div>
               <div className='text-center mbe-2'>
-                <Typography variant='h5'>Acceso al Command Center</Typography>
+                <Typography variant='h5'>Acceso al Dashboard</Typography>
                 <Typography variant='body2' className='mbs-1 text-gray-400'>
                   Ingresa tu correo para recibir un enlace de acceso seguro.<br/>
                   <span style={{ fontSize: '0.8rem', opacity: 0.8, marginTop: '4px', display: 'inline-block' }}>

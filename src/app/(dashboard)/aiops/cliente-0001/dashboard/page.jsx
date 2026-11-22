@@ -72,7 +72,7 @@ const AIOpsDashboard = () => {
       <Grid item xs={12}>
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
-            <Typography variant='h4' sx={{ color: '#00fbff', fontWeight: 900, letterSpacing: '2px' }}>AIOps COMMAND CENTER</Typography>
+            <Typography variant='h4' sx={{ color: '#00fbff', fontWeight: 900, letterSpacing: '2px' }}>AIOps DASHBOARD</Typography>
             <Typography variant='body1' sx={{ color: 'rgba(255,255,255,0.5)' }}>Visibilidad Total 360°: Infraestructura, Seguridad, Git y Ciclo de Vida DevOps.</Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 3 }}>

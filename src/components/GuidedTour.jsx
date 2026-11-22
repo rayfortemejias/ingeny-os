@@ -606,13 +606,13 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       }
     ]
 
-    // Pasos para el Command Center (Torre de Control & Cerebro Cognitivo)
+    // Pasos para el Dashboard (Torre de Control & Cerebro Cognitivo)
     const commandCenterTourSteps = [
       {
         element: '#tour-cc-header',
         popover: {
-          title: '🌐 Command Center: Ecosistema Cognitivo Global',
-          description: '¡Bienvenido a la torre de control de Nodepath! Desde este Command Center supervisas la inteligencia artificial de tu empresa: la actividad en tiempo real del Cerebro Cognitivo, telemetría técnica, rendimiento financiero y tráfico de prospectos atendidos autónomamente.',
+          title: '🌐 Dashboard: Ecosistema Cognitivo Global',
+          description: '¡Bienvenido a la torre de control de Nodepath! Desde este Dashboard supervisas la inteligencia artificial de tu empresa: la actividad en tiempo real del Cerebro Cognitivo, telemetría técnica, rendimiento financiero y tráfico de prospectos atendidos autónomamente.',
           side: 'bottom',
           align: 'start'
         }
@@ -724,7 +724,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         element: '#tour-cc-start-btn',
         popover: {
           title: '🧭 Tour Disponible en Cualquier Momento',
-          description: '¡Has completado el recorrido por el Command Center! Puedes volver a lanzar este tour proactivo siempre que lo desees haciendo clic en este botón.',
+          description: '¡Has completado el recorrido por el Dashboard! Puedes volver a lanzar este tour proactivo siempre que lo desees haciendo clic en este botón.',
           side: 'bottom',
           align: 'end'
         }
@@ -957,7 +957,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       defaultDoneText = '¡Flujo Post-Llamada Dominado! ✓'
     } else if (tourType === 'command_center') {
       tourSteps = commandCenterTourSteps
-      defaultDoneText = '¡Comenzar en el Command Center! 🚀'
+      defaultDoneText = '¡Comenzar en el Dashboard! 🚀'
     } else if (tourType === 'executive') {
       tourSteps = executiveTourSteps
       defaultDoneText = '¡Listo para Gestionar mis Leads! 🚀'

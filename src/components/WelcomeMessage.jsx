@@ -58,7 +58,7 @@ export default function WelcomeMessage() {
         variant="filled"
         sx={{ width: '100%', mt: 6, fontWeight: 'bold' }}
       >
-        ¡Bienvenido al Command Center, {userName}! El Ecosistema Cognitivo está a tu disposición.
+        ¡Bienvenido al Dashboard, {userName}! El Ecosistema Cognitivo está a tu disposición.
       </Alert>
     </Snackbar>
   )

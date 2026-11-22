@@ -241,7 +241,7 @@ const TotalEarning = ({ realLeads = [], brainConfig }) => {
              
              <Box sx={{ textAlign: 'center', mb: 3 }}>
                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-                 Estás solicitando desbloquear el Command Center.<br/>Elige tu vía preferida para que el equipo comercial te active.
+                 Estás solicitando desbloquear el Dashboard.<br/>Elige tu vía preferida para que el equipo comercial te active.
                </Typography>
              </Box>
 

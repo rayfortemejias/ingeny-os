@@ -157,7 +157,7 @@ const VerticalMenu = ({ scrollMenu }) => {
             marginBottom: '12px'
           }}
         >
-          COMMAND CENTER
+          DASHBOARD
         </MenuItem>
 
         <MenuSection label='Enterprise B2B'>

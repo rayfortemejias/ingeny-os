@@ -43,7 +43,7 @@ const DashboardAnalytics = () => {
   const [runCCTour, setRunCCTour] = useState(false)
   const [isTourBlinking, setIsTourBlinking] = useState(true)
 
-  // El botón del tour parpadea de forma destacada durante los primeros segundos al entrar al Command Center
+  // El botón del tour parpadea de forma destacada durante los primeros segundos al entrar al Dashboard
   useEffect(() => {
     setIsTourBlinking(true)
     const blinkTimer = setTimeout(() => {
@@ -52,7 +52,7 @@ const DashboardAnalytics = () => {
     return () => clearTimeout(blinkTimer)
   }, [])
 
-  // Disparo proactivo automático en la primera visita al Command Center
+  // Disparo proactivo automático en la primera visita al Dashboard
   useEffect(() => {
     if (loading || showConfigModal) return
     if (typeof window === 'undefined') return
@@ -71,7 +71,7 @@ const DashboardAnalytics = () => {
     // Si la sesión de NextAuth todavía se está resolviendo, esperamos a que esté lista para no disparar con guest_id transitorio
     if (status === 'loading') return
 
-    // Si el usuario es un Ejecutivo Comercial (KAM), nunca debe ver el Command Center ni el modal de configuración incompleta.
+    // Si el usuario es un Ejecutivo Comercial (KAM), nunca debe ver el Dashboard ni el modal de configuración incompleta.
     // Se le redirige de inmediato a la vista del Agente.
     const isExec = session?.user?.role === 'EXECUTIVE' || (typeof window !== 'undefined' && localStorage.getItem('sdr_user_role') === 'EXECUTIVE')
     if (isExec) {
@@ -186,7 +186,7 @@ const DashboardAnalytics = () => {
             Configuración Incompleta
           </Typography>
           <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)', mb: 4, fontSize: '1.1rem' }}>
-            Debes completar tu configuración en el SDR Cognitivo (Ingesta de datos y vinculación de WhatsApp) antes de acceder al Command Center.
+            Debes completar tu configuración en el SDR Cognitivo (Ingesta de datos y vinculación de WhatsApp) antes de acceder al Dashboard.
           </Typography>
           <Button 
             variant="contained" 
@@ -302,7 +302,7 @@ const DashboardAnalytics = () => {
               }}
             />
             <i className="ri-compass-3-line" style={{ fontSize: '1.3rem' }}></i>
-            Tour Command Center 🧭
+            Tour Dashboard 🧭
           </Button>
         </Box>
       </Grid>
@@ -495,7 +495,7 @@ const DashboardAnalytics = () => {
         </ModernTooltip>
       </Grid>
 
-      {/* Guided Tour for Command Center & Cognitive Brain */}
+      {/* Guided Tour for Dashboard & Cognitive Brain */}
       <GuidedTour run={runCCTour} setRun={setRunCCTour} tourType="command_center" />
 
     </Grid>

@@ -17,7 +17,7 @@ import Avatar from '@mui/material/Avatar'
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 
 const quickLinks = [
-  { label: 'Command Center', icon: 'ri-dashboard-2-line', color: '#a855f7', path: '/' },
+  { label: 'Dashboard', icon: 'ri-dashboard-2-line', color: '#a855f7', path: '/' },
   { label: 'Nodepath Sales 360', icon: 'ri-robot-line', color: '#00fbff', path: '/marketing/sdr' },
   { label: 'Sitio Web Oficial', icon: 'ri-global-line', color: '#25D366', path: 'https://getnodepath.com', external: true },
   { label: 'Blog NodePath', icon: 'ri-book-read-line', color: '#f59e0b', path: 'https://www.getnodepath.com/blog/', external: true }

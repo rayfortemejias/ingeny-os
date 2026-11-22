@@ -266,10 +266,10 @@ const CompanyChoiceModal = ({ open, userEmail, userName, onComplete, onClose, is
             }}
           />
           <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff', mb: 1, letterSpacing: '-0.5px' }}>
-            {isConfirmedAdmin ? 'Tu Organización en el Command Center' : '¿Deseas crear una nueva empresa o unirte a tu equipo?'}
+            {isConfirmedAdmin ? 'Tu Organización en el Dashboard' : '¿Deseas crear una nueva empresa o unirte a tu equipo?'}
           </Typography>
           <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.65)', maxWidth: 480, mx: 'auto' }}>
-            Sesión iniciada como <strong>{email}</strong>. {isConfirmedAdmin ? 'Consulta tu empresa registrada o gestiona tu acceso empresarial.' : 'Selecciona cómo deseas configurar tu espacio en el Command Center.'}
+            Sesión iniciada como <strong>{email}</strong>. {isConfirmedAdmin ? 'Consulta tu empresa registrada o gestiona tu acceso empresarial.' : 'Selecciona cómo deseas configurar tu espacio en el Dashboard.'}
           </Typography>
 
           {/* Tarjeta de estado de Organización Actual para Administrador */}

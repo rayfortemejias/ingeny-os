@@ -1297,7 +1297,7 @@ const NexusBrain = ({ realLeads = [], brainConfig }) => {
                <Box sx={{ flex: 1, pr: { md: '220px' } }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                      <i className="ri-magic-line" style={{ color: '#a855f7', fontSize: '1.5rem' }}></i>
-                     <Typography variant="h5" sx={{ color: '#fff', fontWeight: 900, letterSpacing: 0.5 }}>Personaliza tu Command Center</Typography>
+                     <Typography variant="h5" sx={{ color: '#fff', fontWeight: 900, letterSpacing: 0.5 }}>Personaliza tu Dashboard</Typography>
                   </Box>
                   <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)', maxWidth: '700px', lineHeight: 1.6 }}>
                      Agrega, remueve y organiza las cards de análisis y kpis cognitivos. Construye un ecosistema a tu medida conectando fuentes de datos externas en tiempo real al actualizar al Plan PRO.
@@ -1366,7 +1366,7 @@ const NexusBrain = ({ realLeads = [], brainConfig }) => {
             
             <Box sx={{ textAlign: 'center', mb: 3 }}>
               <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-                Estás solicitando desbloquear el Command Center.<br/>Elige tu vía preferida para que el equipo comercial te active.
+                Estás solicitando desbloquear el Dashboard.<br/>Elige tu vía preferida para que el equipo comercial te active.
               </Typography>
             </Box>
 

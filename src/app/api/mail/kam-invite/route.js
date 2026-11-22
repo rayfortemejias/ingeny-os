@@ -15,7 +15,7 @@ const generateKamInviteHtml = ({ name, role, companyName, inviteCode, email, isE
     : isEdit
       ? `Tus datos de acceso y perfil comercial han sido actualizados en <strong>${companyName}</strong>.`
       : `Has sido dado de alta como Ejecutivo Comercial (KAM) en <strong>${companyName}</strong>.`;
-  const actionText = isEdit ? 'Ver Mi Panel de Leads' : 'Ingresar al Command Center';
+  const actionText = isEdit ? 'Ver Mi Panel de Leads' : 'Ingresar al Dashboard';
 
   return `
     <div style="font-family: 'Segoe UI', Inter, Helvetica, Arial, sans-serif; max-width: 620px; margin: 0 auto; background-color: #0b141a; color: #f8fafc; padding: 40px 30px; border-radius: 16px; border: 1px solid rgba(0, 251, 255, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
@@ -111,7 +111,7 @@ export async function POST(request) {
       ? `Acceso Revocado — ${companyName || 'Nodepath'}`
       : isEdit
         ? `Actualización de Credenciales — ${companyName || 'Nodepath'}`
-        : `Invitación al Equipo Comercial de ${companyName || 'Nodepath'} — Acceso a Command Center`;
+        : `Invitación al Equipo Comercial de ${companyName || 'Nodepath'} — Acceso a Dashboard`;
 
     const html = generateKamInviteHtml({
       name: name || 'Ejecutivo Comercial',
@@ -125,7 +125,7 @@ export async function POST(request) {
     });
 
     const info = await transporter.sendMail({
-      from: `"Nodepath Command Center" <${from}>`,
+      from: `"Nodepath Dashboard" <${from}>`,
       to: email,
       subject,
       html,
