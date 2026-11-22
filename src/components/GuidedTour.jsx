@@ -729,17 +729,30 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       {
         element: '#tour-inbox-header-lead',
         popover: {
-          title: '🤖 Modo "IA Supervisor: Activa"',
-          description: 'Observa esta etiqueta: mientras tú estés conversando, el agente de IA pasa automáticamente a modo <strong>Supervisor</strong>. Escucha y analiza el diálogo sin interrumpir ni enviar mensajes autónomos, garantizando que tú mantengas el control total de la venta.',
+          title: '🤝 Modo "IA Concierge: Activa" (Nunca deja al cliente en visto)',
+          description: 'Mientras tú tienes el lead asignado, la IA <strong>no inventa precios ni contradice lo acordado en tu llamada</strong>. Si el cliente vuelve a escribir al WhatsApp oficial, la IA le envía un acuse de recibo amable y <strong>te avisa de inmediato a tu WhatsApp personal</strong> con el mensaje exacto y el enlace a este Inbox.',
           side: 'bottom',
           align: 'center'
         }
       },
       {
+        element: '#tour-inbox-outcome-btn',
+        popover: {
+          title: '📋 Paso Obligatorio Post-Llamada: Registrar Resultado',
+          description: 'Después de reunirte con el cliente (recibirás un <strong>recordatorio automático por WhatsApp</strong> ~1h antes y después de la cita), presiona este botón para cerrar el ciclo:<br/><br/>' +
+            '• <strong>🎉 Cerrado Ganado:</strong> El cliente compró.<br/>' +
+            '• <strong>📅 Requiere Segunda Reunión:</strong> Pasa a Seguimiento.<br/>' +
+            '• <strong>⚠️ No asistió (No-Show):</strong> Envía WhatsApp automático y reactiva la IA para reagendar.<br/>' +
+            '• <strong>❌ Cerrado Perdido:</strong> Descarta el lead con motivo.',
+          side: 'bottom',
+          align: 'end'
+        }
+      },
+      {
         element: '#tour-inbox-chat-history',
         popover: {
-          title: '💬 Historial de Conversación con WhatsApp',
-          description: 'Lee toda la interacción previa que mantuvo el cliente con la IA. Podrás entender en segundos qué producto o servicio le interesa, qué dudas planteó y qué disponibilidad de horario tiene.',
+          title: '💬 Historial Unificado en la Plataforma',
+          description: 'Aquí ves toda la conversación previa del cliente con la IA y tus respuestas enviadas desde este Inbox. <strong>Importante:</strong> si decides conversar por tu <em>WhatsApp personal</em> fuera de la plataforma, esos mensajes externos no quedan registrados aquí, por lo que es clave que igualmente registres el avance en <strong>«Registrar Resultado / Cerrar»</strong>.',
           side: 'top',
           align: 'center'
         }
@@ -747,8 +760,8 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       {
         element: '#tour-inbox-input-container',
         popover: {
-          title: '✈️ Envío de Respuestas Directas al WhatsApp',
-          description: 'Escribe tu mensaje y presiona el botón de envío. Tu mensaje saldrá de inmediato al WhatsApp personal del cliente como una respuesta oficial de tu empresa, manteniendo el historial unificado.',
+          title: '✈️ Responder desde el Inbox (Recomendado)',
+          description: 'Escribe aquí tu respuesta y saldrá al WhatsApp del cliente desde el número oficial de la empresa, manteniendo toda la trazabilidad para ti y el administrador.',
           side: 'top',
           align: 'center'
         }
@@ -833,6 +846,60 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       }
     ]
 
+    // Pasos para el flujo Post-Llamada, Seguimiento y Cierre (Administrador)
+    const postCallTourSteps = [
+      {
+        element: '#tour-admin-action-bar',
+        popover: {
+          title: '🔔 Centro de Acciones Pendientes del Administrador',
+          description: 'Ya no tienes que adivinar qué hacer ni cuándo. Esta barra aparece automáticamente cuando hay <strong>leads esperando ejecutivo</strong> o <strong>leads agendados que requieren seguimiento post-llamada</strong>, con acceso directo a la acción correspondiente.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '#tour-first-lead-card',
+        popover: {
+          title: '🎯 Qué pasa si el Lead vuelve a escribir tras el Handoff',
+          description: 'Cuando un lead ya tiene ejecutivo asignado, la IA opera en <strong>Modo Concierge</strong>: <strong>nunca deja al cliente en visto</strong>. Le envía un acuse de recibo amable y alerta de inmediato por WhatsApp al ejecutivo asignado para que responda desde el <strong>INBOX</strong> o su WhatsApp.',
+          side: 'right',
+          align: 'start'
+        }
+      },
+      {
+        element: '#tour-lead-chat-action',
+        popover: {
+          title: '📋 Gestionar Lead: Editar, Reasignar, No-Show o Cerrar',
+          description: 'Haz clic en <strong>«VER DETALLE / GESTIONAR»</strong> en cualquier lead agendado para:<br/><br/>' +
+            '• <strong>Editar datos</strong> (corregir nombre, rol o empresa).<br/>' +
+            '• <strong>Cambiar / Reasignar Ejecutivo</strong> (sincronizando su correo en Google Calendar).<br/>' +
+            '• <strong>Registrar Resultado Post-Llamada</strong> (Cerrado Ganado, Seguimiento, No-Show con reapertura automática por IA o Cerrado Perdido).',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#tour-calendar-status',
+        popover: {
+          title: '⏰ Recordatorios Automáticos Pre y Post-Reunión',
+          description: 'Con Google Calendar activo, el sistema envía automáticamente:<br/><br/>' +
+            '• <strong>~1 hora antes de la cita:</strong> recordatorio por WhatsApp al Lead y al Ejecutivo con el enlace de Meet.<br/>' +
+            '• <strong>~30–90 min después de la cita:</strong> recordatorio al Ejecutivo por WhatsApp para que siga atendiendo al cliente hasta cerrar y registre el resultado.',
+          side: 'bottom',
+          align: 'center'
+        }
+      },
+      {
+        element: '#tour-tab-seguimiento',
+        popover: {
+          title: '🔄 Seguimiento, Descalificados y Cerrados',
+          description: 'Cada vez que tú o tu ejecutivo registran un resultado, el lead se mueve automáticamente a <strong>SEGUIMIENTO</strong>, <strong>CERRADOS</strong> o <strong>DESCALIFICADOS</strong> y alimenta las métricas de <strong>REPORTES SDR</strong>.',
+          side: 'bottom',
+          align: 'center'
+        }
+      }
+    ]
+
     let tourSteps = generalTourSteps
     let defaultDoneText = '¡Comenzar! ✓'
 
@@ -851,6 +918,9 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
     } else if (tourType === 'team_handoff') {
       tourSteps = teamHandoffTourSteps
       defaultDoneText = '¡Entendido, Gestionar Equipo! 👥'
+    } else if (tourType === 'post_call') {
+      tourSteps = postCallTourSteps
+      defaultDoneText = '¡Flujo Post-Llamada Dominado! ✓'
     } else if (tourType === 'command_center') {
       tourSteps = commandCenterTourSteps
       defaultDoneText = '¡Comenzar en el Command Center! 🚀'
@@ -929,7 +999,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
           if (tourType === 'whatsapp' && setIsWhatsappQrOpen) {
             setIsWhatsappQrOpen(false)
           }
-          if ((tourType === 'leads' || tourType === 'team_handoff') && setTourType) {
+          if ((tourType === 'leads' || tourType === 'team_handoff' || tourType === 'post_call') && setTourType) {
             setTourType('general')
           }
           if (setRun) setRun(false)

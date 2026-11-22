@@ -4147,6 +4147,77 @@ const SDRCognitivoB2B = () => {
                   </Tooltip>
                 </Box>
               </Box>
+              {!isExecutive && (() => {
+                const pendingHandoffList = allLeads.filter(l => l.status === 'POR AGENDAR ( CON INTERES )' && !(l.assignedKam || l.assigned_kam));
+                const scheduledHandoffList = allLeads.filter(l => l.status === 'AGENDADO' && (l.assignedKam || l.assigned_kam));
+                if (pendingHandoffList.length === 0 && scheduledHandoffList.length === 0) return null;
+                return (
+                  <Box
+                    id="tour-admin-action-bar"
+                    sx={{
+                      mb: 3,
+                      p: 2,
+                      borderRadius: '14px',
+                      bgcolor: pendingHandoffList.length > 0 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(0, 251, 255, 0.06)',
+                      border: pendingHandoffList.length > 0 ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid rgba(0, 251, 255, 0.28)',
+                      display: 'flex',
+                      flexDirection: { xs: 'column', md: 'row' },
+                      alignItems: { xs: 'flex-start', md: 'center' },
+                      justifyContent: 'space-between',
+                      gap: 2
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <i
+                        className={pendingHandoffList.length > 0 ? 'ri-alarm-warning-fill' : 'ri-notification-3-fill'}
+                        style={{ fontSize: '1.35rem', color: pendingHandoffList.length > 0 ? '#f59e0b' : '#00fbff' }}
+                      ></i>
+                      <Box>
+                        <Typography variant="subtitle2" sx={{ color: '#fff', fontWeight: 900 }}>
+                          {pendingHandoffList.length > 0
+                            ? `Acción del Administrador: ${pendingHandoffList.length} lead(s) calificado(s) esperando asignación de ejecutivo`
+                            : `Seguimiento Post-Llamada: ${scheduledHandoffList.length} lead(s) asignado(s) a ejecutivos`}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block' }}>
+                          {pendingHandoffList.length > 0
+                            ? 'Asigna un ejecutivo para activar las notificaciones y el Modo Concierge en WhatsApp.'
+                            : 'Si el lead ya tuvo su llamada, verifica que el ejecutivo haya registrado el resultado (Ganado, Seguimiento, No-Show o Perdido) en "VER DETALLE / GESTIONAR".'}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {pendingHandoffList.length > 0 ? (
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={() => openAssignModal(pendingHandoffList[0])}
+                          sx={{ bgcolor: '#f59e0b', color: '#000', fontWeight: 900, textTransform: 'none', '&:hover': { bgcolor: '#d97706' } }}
+                        >
+                          Asignar ahora
+                        </Button>
+                      ) : (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => { setSelectedLead(scheduledHandoffList[0]); setIsHandoffModalOpen(true); }}
+                          sx={{ borderColor: '#00fbff', color: '#00fbff', fontWeight: 800, textTransform: 'none', '&:hover': { bgcolor: 'rgba(0,251,255,0.12)' } }}
+                        >
+                          Revisar / Registrar Resultado
+                        </Button>
+                      )}
+                      <Button
+                        size="small"
+                        variant="text"
+                        onClick={() => { setTourType('post_call'); setRunTour(true); }}
+                        sx={{ color: 'rgba(255,255,255,0.75)', fontWeight: 700, textTransform: 'none', fontSize: '0.75rem' }}
+                      >
+                        <i className="ri-compass-3-line" style={{ marginRight: '5px' }}></i>
+                        ¿Qué debo hacer?
+                      </Button>
+                    </Box>
+                  </Box>
+                );
+              })()}
               {filteredLeads.filter(l => l.status !== 'DESCARTADO' && l.status !== 'EN SEGUIMIENTO' && l.status !== 'CERRADO').length === 0 ? (
                 <NeuralCard id="tour-first-lead-card" sx={{ p: 6, textAlign: 'center', border: '1px dashed rgba(0,251,255,0.2)', bgcolor: 'rgba(0,251,255,0.03)', mt: 2 }}>
                   <i className="ri-radar-line" style={{ fontSize: '4rem', color: '#00fbff', opacity: 0.5, display: 'inline-block', marginBottom: '16px', animation: `${pulseGlow} 3s infinite` }}></i>
@@ -6581,14 +6652,38 @@ const SDRCognitivoB2B = () => {
             </Box>
           ) : (
             <>
-              <Box id="tour-inbox-header-lead" sx={{ p: 3, borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: 'rgba(0,0,0,0.2)' }}>
+              <Box id="tour-inbox-header-lead" sx={{ p: 3, borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1.5, bgcolor: 'rgba(0,0,0,0.2)' }}>
                 <Box>
                   <Typography variant="h6" sx={{ color: '#fff', fontWeight: 900 }}>{selectedInboxLead.name}</Typography>
                   <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>{selectedInboxLead.phone} • {selectedInboxLead.company}</Typography>
                 </Box>
-                <Tooltip title="La IA analiza la conversación pero no interviene.">
-                  <Chip size="small" icon={<i className="ri-robot-line"></i>} label="IA Supervisor: Activa" sx={{ bgcolor: 'rgba(0, 251, 255, 0.1)', color: '#00fbff', border: '1px solid rgba(0, 251, 255, 0.3)' }} />
-                </Tooltip>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+                  <Tooltip title="Modo Concierge activo: si el cliente escribe, la IA acusa recibo y te avisa por WhatsApp sin inventar precios ni interrumpirte.">
+                    <Chip size="small" icon={<i className="ri-robot-line"></i>} label="IA Concierge: Activa" sx={{ bgcolor: 'rgba(0, 251, 255, 0.1)', color: '#00fbff', border: '1px solid rgba(0, 251, 255, 0.3)' }} />
+                  </Tooltip>
+                  <Button
+                    id="tour-inbox-outcome-btn"
+                    size="small"
+                    variant="contained"
+                    startIcon={<i className="ri-checkbox-circle-line"></i>}
+                    onClick={() => {
+                      const mapped = mapLeadFromDB(selectedInboxLead);
+                      setSelectedLead(mapped);
+                      setIsHandoffModalOpen(true);
+                    }}
+                    sx={{
+                      bgcolor: '#f59e0b',
+                      color: '#000',
+                      fontWeight: 900,
+                      fontSize: '0.75rem',
+                      textTransform: 'none',
+                      borderRadius: '8px',
+                      '&:hover': { bgcolor: '#d97706' }
+                    }}
+                  >
+                    Registrar Resultado / Cerrar
+                  </Button>
+                </Box>
               </Box>
 
               <Box id="tour-inbox-chat-history" sx={{ flex: 1, overflowY: 'auto', p: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -6615,7 +6710,12 @@ const SDRCognitivoB2B = () => {
                 })}
               </Box>
 
-              <Box id="tour-inbox-input-container" sx={{ p: 3, borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: 2, bgcolor: 'rgba(0,0,0,0.2)' }}>
+              <Box id="tour-inbox-input-container" sx={{ p: 3, pt: 2, borderTop: '1px solid rgba(255,255,255,0.1)', bgcolor: 'rgba(0,0,0,0.2)' }}>
+                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', mb: 1, fontSize: '11px' }}>
+                  <i className="ri-information-line" style={{ color: '#00fbff', marginRight: '4px' }}></i>
+                  Los mensajes enviados desde aquí quedan en el historial oficial. Si conversas desde tu WhatsApp personal, recuerda registrar el resultado arriba en <strong>«Registrar Resultado / Cerrar»</strong>.
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -6659,6 +6759,7 @@ const SDRCognitivoB2B = () => {
                 >
                   <i className="ri-send-plane-2-fill" style={{ fontSize: '1.4rem', color: '#ffffff' }}></i>
                 </IconButton>
+                </Box>
               </Box>
             </>
           )}
@@ -7184,6 +7285,18 @@ const SDRCognitivoB2B = () => {
                             <Box>
                               <Typography variant="body2" sx={{ fontWeight: 800, color: '#fff' }}>4. Equipo KAMs, Auto-KAM & Handoff</Typography>
                               <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', display: 'block' }}>Ejecutivos, invitaciones, Auto-KAM y traspaso</Typography>
+                            </Box>
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => { setTourMenuAnchor(null); setActiveTab(0); setTourType('post_call'); setTimeout(() => setRunTour(true), 350); }}
+                            sx={{ borderRadius: '8px', my: 0.3, '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.12)' } }}
+                          >
+                            <Box sx={{ mr: 1.5, color: '#f59e0b', display: 'flex', alignItems: 'center' }}>
+                              <i className="ri-calendar-check-line" style={{ fontSize: '1.2rem' }}></i>
+                            </Box>
+                            <Box>
+                              <Typography variant="body2" sx={{ fontWeight: 800, color: '#fff' }}>5. Post-Llamada, Seguimiento & Cierre</Typography>
+                              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', display: 'block' }}>Qué hacer tras la reunión, Modo Concierge y alertas</Typography>
                             </Box>
                           </MenuItem>
                         </Menu>
