@@ -7025,16 +7025,16 @@ const SDRCognitivoB2B = () => {
                     <Box id="tour-badges-info" sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
                       <Tooltip title={
                         <Box sx={{ p: 0.5, maxWidth: '280px' }}>
-                          <Typography variant="subtitle2" sx={{ color: '#f97316', fontWeight: 900, mb: 0.5 }}>Cerebro Cognitivo: Hermes 3 (405B)</Typography>
-                          <Typography variant="body2" sx={{ color: '#475569', fontWeight: 500, lineHeight: 1.4 }}>Este agente está impulsado por el modelo open-source más potente de IA. Diseñado para ventas B2B con <strong style={{ color: '#1e293b' }}>máxima obediencia lógica, cero censura comercial</strong> y razonamiento táctico superior para perfilamiento y agendas.</Typography>
+                          <Typography variant="subtitle2" sx={{ color: '#f97316', fontWeight: 900, mb: 0.5 }}>Cerebro Cognitivo: Claude</Typography>
+                          <Typography variant="body2" sx={{ color: '#475569', fontWeight: 500, lineHeight: 1.4 }}>Este agente está impulsado por <strong style={{ color: '#1e293b' }}>Claude</strong>, diseñado para ventas B2B con razonamiento táctico superior, alta precisión conversacional y estricto apego a tus reglas comerciales.</Typography>
                         </Box>
                       } arrow placement="bottom">
                         <Chip
                           icon={<i className="ri-cpu-line" style={{ color: '#f97316', fontSize: '1.1rem' }}></i>}
                           label={
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Powered by Hermes 3</Box>
-                              <Box sx={{ display: { xs: 'block', sm: 'none' } }}>Hermes</Box>
+                              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Impulsado por Claude</Box>
+                              <Box sx={{ display: { xs: 'block', sm: 'none' } }}>Claude</Box>
                               <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#f97316', boxShadow: '0 0 5px #f97316', ml: 0.5 }} />
                             </Box>
                           }
