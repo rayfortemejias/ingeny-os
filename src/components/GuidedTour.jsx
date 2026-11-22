@@ -329,7 +329,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         popover: {
           title: '📅 Agendamiento Autónomo (Google Calendar & Meet)',
           description: '<strong>Sincronización de Citas en Tiempo Real:</strong> El SDR consulta tu disponibilidad y agendará reuniones con enlace de Google Meet directamente en tu calendario cuando un prospecto califique el marco BANT.<br/><br/>' +
-            '⚠️ <strong>Acción Requerida para el Administrador:</strong> Si este botón indica <em>"Vincular G-Cal ⚠️"</em>, debes hacer clic para autorizar tu cuenta oficial de Google Calendar. Sin esta vinculación, el agente derivará los prospectos a tus ejecutivos comerciales para que agenden manualmente.',
+            '⚠️ <strong>Acción Requerida para el Administrador:</strong> Si este botón indica <em>"Vincular Calendario ⚠️"</em>, debes hacer clic para autorizar tu cuenta oficial de Google Calendar. Sin esta vinculación, el agente derivará los prospectos a tus ejecutivos comerciales para que agenden manualmente.',
           side: 'bottom',
           align: 'end'
         }

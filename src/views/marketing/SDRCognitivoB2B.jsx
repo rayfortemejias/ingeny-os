@@ -7294,8 +7294,8 @@ const SDRCognitivoB2B = () => {
                                         }}
                                       >
                                         <i className="ri-calendar-check-line" style={{ marginRight: '8px', fontSize: '1rem', color: '#94a3b8' }}></i>
-                                        <Box sx={{ display: { xs: 'none', lg: 'block' } }}>G-Cal: No Aplica</Box>
-                                        <Box sx={{ display: { xs: 'block', lg: 'none' } }}>G-Cal N/A</Box>
+                                        <Box sx={{ display: { xs: 'none', lg: 'block' } }}>Calendario: No Aplica</Box>
+                                        <Box sx={{ display: { xs: 'block', lg: 'none' } }}>Cal. N/A</Box>
                                       </Button>
                                     </span>
                                   </Tooltip>
@@ -7323,8 +7323,8 @@ const SDRCognitivoB2B = () => {
                                         }}
                                       >
                                         <i className="ri-calendar-check-line" style={{ marginRight: '8px', fontSize: '1rem', color: '#94a3b8' }}></i>
-                                        <Box sx={{ display: { xs: 'none', lg: 'block' } }}>G-Cal: Requiere Login Google</Box>
-                                        <Box sx={{ display: { xs: 'block', lg: 'none' } }}>G-Cal Inactivo</Box>
+                                        <Box sx={{ display: { xs: 'none', lg: 'block' } }}>Calendario Pausado (Login Google)</Box>
+                                        <Box sx={{ display: { xs: 'block', lg: 'none' } }}>Cal. Pausado</Box>
                                       </Button>
                                     </span>
                                   </Tooltip>
@@ -7359,7 +7359,7 @@ const SDRCognitivoB2B = () => {
                                       }}
                                     >
                                       <i className="ri-calendar-check-line" style={{ color: '#f59e0b', marginRight: '8px', fontSize: '1.1rem' }}></i>
-                                      <Box sx={{ display: { xs: 'none', lg: 'block' } }}>Vincular G-Cal ⚠️</Box>
+                                      <Box sx={{ display: { xs: 'none', lg: 'block' } }}>Vincular Calendario ⚠️</Box>
                                       <Box sx={{ display: { xs: 'block', lg: 'none' } }}>Vincular ⚠️</Box>
                                     </Button>
                                   </Tooltip>
@@ -7407,8 +7407,8 @@ const SDRCognitivoB2B = () => {
                                       }}
                                     >
                                       <i className="ri-calendar-check-line" style={{ color: '#00fbff', marginRight: '8px', fontSize: '1.1rem' }}></i>
-                                      <Box sx={{ display: { xs: 'none', lg: 'block' } }}>G-Cal: Activo 🟢</Box>
-                                      <Box sx={{ display: { xs: 'block', lg: 'none' } }}>G-Cal 🟢</Box>
+                                      <Box sx={{ display: { xs: 'none', lg: 'block' } }}>Calendario Activo 🟢</Box>
+                                      <Box sx={{ display: { xs: 'block', lg: 'none' } }}>Cal. Activo 🟢</Box>
                                     </Button>
                                   </Tooltip>
                                 );
@@ -7455,7 +7455,7 @@ const SDRCognitivoB2B = () => {
                                     }}
                                   >
                                     <i className="ri-time-line" style={{ color: '#f59e0b', marginRight: '8px', fontSize: '1.1rem' }}></i>
-                                    <Box sx={{ display: { xs: 'none', lg: 'block' } }}>G-Cal: Pausado (KAM) 🟡</Box>
+                                    <Box sx={{ display: { xs: 'none', lg: 'block' } }}>Calendario Pausado 🟡</Box>
                                     <Box sx={{ display: { xs: 'block', lg: 'none' } }}>Pausado 🟡</Box>
                                   </Button>
                                 </Tooltip>
