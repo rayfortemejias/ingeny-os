@@ -186,6 +186,40 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         .driver-popover.nodepath-tour-popover .driver-popover-arrow {
           border-color: #0d171d !important;
         }
+
+        /* Tooltips de términos técnicos (ICP, BANT, ROI, KAM, RAG, Handoff) */
+        .driver-popover.nodepath-tour-popover .np-term {
+          position: relative;
+          display: inline-block;
+          color: #00fbff;
+          border-bottom: 1px dotted rgba(0, 251, 255, 0.75);
+          cursor: help;
+          font-weight: 800;
+          text-decoration: none;
+        }
+
+        .driver-popover.nodepath-tour-popover .np-term:hover::after {
+          content: attr(data-tip);
+          position: absolute;
+          left: 50%;
+          bottom: calc(100% + 8px);
+          transform: translateX(-50%);
+          width: 240px;
+          max-width: 70vw;
+          background: #061018;
+          color: #e2e8f0;
+          border: 1px solid rgba(0, 251, 255, 0.55);
+          border-radius: 8px;
+          padding: 8px 10px;
+          font-size: 0.74rem;
+          font-weight: 500;
+          line-height: 1.4;
+          text-align: left;
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85);
+          z-index: 999999;
+          pointer-events: none;
+          white-space: normal;
+        }
       `
   }, [])
 
@@ -330,7 +364,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         element: '#tour-tab-configuracion',
         popover: {
           title: '⚙️ Pestaña: Configuración de Datos (Para Editar)',
-          description: '<strong>Edición y Actualización Continua:</strong> En esta pestaña accedes al Asistente de Configuración SDR en cualquier momento para <strong>editar o actualizar</strong> tus datos ya guardados: modificar tu ICP, horarios comerciales, propuesta de valor o subir y reemplazar documentos oficiales según evolucione tu negocio.<br/><br/>' +
+          description: '<strong>Edición y Actualización Continua:</strong> En esta pestaña accedes al Asistente de Configuración SDR en cualquier momento para <strong>editar o actualizar</strong> tus datos ya guardados: modificar tu perfil de cliente ideal (ICP), horarios comerciales, propuesta de valor o subir y reemplazar documentos oficiales según evolucione tu negocio.<br/><br/>' +
             '🧭 <em>Dentro del asistente tienes el botón "Tour de Ayuda" para recorrer cada fase paso a paso.</em>',
           side: 'bottom',
           align: 'end'
@@ -968,6 +1002,37 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         return
       }
 
+      // Enriquecer términos técnicos (ICP, BANT, ROI, KAM, RAG, Handoff) con tooltips explicativos
+      const glossaryTips = [
+        { regex: /\bICP\b/g, tip: 'ICP (Ideal Customer Profile): Perfil de tu cliente ideal — tipo de persona o empresa a la que quieres vender.' },
+        { regex: /\bBANT\b/g, tip: 'BANT: Método de calificación de ventas que evalúa Presupuesto (Budget), Autoridad, Necesidad (Need) y Urgencia (Timeline).' },
+        { regex: /\bROI\b/g, tip: 'ROI (Retorno de Inversión): Ganancia o valor económico generado frente al costo invertido en el agente.' },
+        { regex: /\bKAMs?\b/g, tip: 'KAM (Key Account Manager): Ejecutivo comercial humano encargado de atender la llamada y cerrar la venta.' },
+        { regex: /\bRAG\b/g, tip: 'RAG: Base de conocimiento oficial (tus documentos y web) que consulta la IA para responder con datos reales sin inventar.' },
+        { regex: /\bHandoff\b/g, tip: 'Handoff: Traspaso ordenado del prospecto desde la IA hacia un ejecutivo comercial humano.' },
+      ]
+      const enrichGlossaryHtml = (html) => {
+        if (!html || typeof html !== 'string') return html
+        return html
+          .split(/(<[^>]+>)/g)
+          .map(part => {
+            if (part.startsWith('<')) return part
+            let out = part
+            for (const { regex, tip } of glossaryTips) {
+              out = out.replace(regex, (m) => `<abbr class="np-term" data-tip="${tip}" title="${tip}">${m}</abbr>`)
+            }
+            return out
+          })
+          .join('')
+      }
+
+      const enrichedSteps = availableSteps.map(step => ({
+        ...step,
+        popover: step.popover
+          ? { ...step.popover, description: enrichGlossaryHtml(step.popover.description) }
+          : step.popover
+      }))
+
       const driverInstance = driver({
         showProgress: true,
         progressText: 'Paso {{current}} de {{total}}',
@@ -980,7 +1045,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         stagePadding: 10,
         stageRadius: 14,
         popoverClass: 'nodepath-tour-popover',
-        steps: availableSteps,
+        steps: enrichedSteps,
         onHighlightStarted: (element, step) => {
           if (tourType === 'whatsapp' && step?.element) {
             if (typeof step.element === 'string' && step.element.startsWith('#tour-whatsapp-qr-')) {
