@@ -81,7 +81,7 @@ const stepGuides = {
   2: "Selecciona el caso de uso principal para enfocar el comportamiento de tu agente.",
   3: "Esto nos permite dimensionar la capacidad de atención simultánea de la IA.",
   4: "Esta métrica nos ayuda a calibrar la delegación de tareas y la generación de reportes.",
-  5: "Define tus días y horarios de atención comercial para que el agente informe y coordine reuniones en base a tu disponibilidad.",
+  5: "Define tus días y horarios de atención comercial. Esta definición de horario también es usada por el agente para agendar la llamada con el lead según tu disponibilidad.",
   6: "Detalla tu nicho, oferta y servicios. Esto es vital para que la IA sepa qué vender.",
   7: "Paso Obligatorio: Sube documentos o añade URLs (catálogos, precios, servicios) y configura tu mensaje predeterminado ante consultas no mapeadas para que el SDR cuente con conocimiento real y nunca alucine.",
   8: "Lee y acepta nuestras políticas de seguridad y privacidad antes de activar el SDR."
@@ -936,7 +936,7 @@ const SDRCognitivoB2B = () => {
       days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'],
       start: '09:00',
       end: '18:00',
-      icon: 'ri-briefcase-line'
+      icon: 'ri-building-line'
     },
     {
       id: 'extended',
@@ -945,7 +945,7 @@ const SDRCognitivoB2B = () => {
       days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
       start: '08:30',
       end: '19:30',
-      icon: 'ri-store-2-line'
+      icon: 'ri-calendar-check-line'
     },
     {
       id: 'continuous',
@@ -963,7 +963,7 @@ const SDRCognitivoB2B = () => {
       days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
       start: '00:00',
       end: '23:59',
-      icon: 'ri-flashlight-line'
+      icon: 'ri-global-line'
     }
   ];
 
@@ -1930,7 +1930,7 @@ const SDRCognitivoB2B = () => {
         <Box sx={{ p: 4, flex: 1, overflowY: 'auto' }}>
           <Box id="tour-config-guia" sx={{ mb: 5, p: 3, borderRadius: '16px', background: 'linear-gradient(135deg, rgba(0,251,255,0.1) 0%, rgba(139,92,246,0.1) 100%)', border: '1px solid rgba(0,251,255,0.3)', display: 'flex', alignItems: 'flex-start', gap: 2, boxShadow: '0 8px 32px rgba(0, 251, 255, 0.05)', backdropFilter: 'blur(10px)' }}>
             <Box sx={{ width: 40, height: 40, borderRadius: '12px', background: 'linear-gradient(45deg, #00fbff, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 15px rgba(0,251,255,0.4)' }}>
-              <i className="ri-lightbulb-flash-line" style={{ fontSize: '1.4rem', color: '#000' }}></i>
+              <i className="ri-robot-line" style={{ fontSize: '1.4rem', color: '#031018' }}></i>
             </Box>
             <Box>
               <Typography variant="subtitle2" sx={{ color: '#00fbff', fontWeight: 900, mb: 0.5, letterSpacing: 0.5, textTransform: 'uppercase' }}>Guía del Agente</Typography>
@@ -2242,7 +2242,7 @@ const SDRCognitivoB2B = () => {
                   ¿Cuál es el horario de atención de tu empresa?
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mb: 4 }}>
-                  Define los días y horas hábiles. Aplica universalmente a todos los nichos de negocio: define cuándo opera tu empresa, coordinando horarios de despacho/entregas para e-commerce, o rangos válidos de agendamiento para reuniones y atención de ejecutivos.
+                  Define los días y horas hábiles de operación de tu empresa. <strong>Esta definición de horario también es usada por el agente para agendar la llamada con el lead</strong> dentro de tus rangos válidos de disponibilidad (y para coordinar horarios de despacho/entregas en e-commerce).
                 </Typography>
 
                 {/* Presets Rápidos */}
@@ -2262,7 +2262,11 @@ const SDRCognitivoB2B = () => {
                             scheduleEnd: preset.end
                           })}
                           sx={{
-                            p: 2.5,
+                            p: 2.2,
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
                             borderRadius: '14px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
@@ -2278,14 +2282,34 @@ const SDRCognitivoB2B = () => {
                             }
                           }}
                         >
-                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                            <i className={preset.icon} style={{ color: isSelected ? '#00fbff' : 'rgba(255,255,255,0.7)', fontSize: '1.4rem' }}></i>
-                            {isSelected && <i className="ri-checkbox-circle-fill" style={{ color: '#00fbff', fontSize: '1.2rem' }}></i>}
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, minWidth: 0 }}>
+                              <Box
+                                sx={{
+                                  width: 32,
+                                  height: 32,
+                                  borderRadius: '9px',
+                                  bgcolor: isSelected ? 'rgba(0,251,255,0.18)' : 'rgba(255,255,255,0.06)',
+                                  border: isSelected ? '1px solid rgba(0,251,255,0.45)' : '1px solid rgba(255,255,255,0.1)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0
+                                }}
+                              >
+                                <i className={preset.icon} style={{ color: isSelected ? '#00fbff' : 'rgba(255,255,255,0.8)', fontSize: '1.1rem' }}></i>
+                              </Box>
+                              <Typography sx={{ color: isSelected ? '#00fbff' : '#fff', fontWeight: 800, fontSize: '0.92rem', lineHeight: 1.2 }}>
+                                {preset.title}
+                              </Typography>
+                            </Box>
+                            {isSelected && (
+                              <Box sx={{ width: 20, height: 20, borderRadius: '50%', bgcolor: '#00fbff', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                <i className="ri-check-line" style={{ fontSize: '0.85rem', fontWeight: 900 }}></i>
+                              </Box>
+                            )}
                           </Box>
-                          <Typography sx={{ color: isSelected ? '#00fbff' : '#fff', fontWeight: 800, fontSize: '0.95rem' }}>
-                            {preset.title}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', mt: 0.5 }}>
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', mt: 1, pl: '42px' }}>
                             {preset.desc}
                           </Typography>
                         </Box>
@@ -2297,7 +2321,7 @@ const SDRCognitivoB2B = () => {
                 {/* Selector de Días */}
                 <Box sx={{ mb: 4, p: 3, borderRadius: '14px', bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <Typography variant="subtitle2" sx={{ color: '#fff', fontWeight: 800, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <i className="ri-calendar-event-line" style={{ color: '#00fbff' }}></i> Días de Atención Comercial
+                    <i className="ri-calendar-check-line" style={{ color: '#00fbff' }}></i> Días de Atención Comercial
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
                     {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map((day) => {
@@ -2653,7 +2677,7 @@ const SDRCognitivoB2B = () => {
                             justifyContent: 'center',
                             flexShrink: 0
                           }}>
-                            <i className="ri-calendar-event-line" style={{ color: '#f59e0b', fontSize: '1.8rem' }}></i>
+                            <i className="ri-calendar-check-line" style={{ color: '#f59e0b', fontSize: '1.8rem' }}></i>
                           </Box>
                           <Box sx={{ flex: 1 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 0.5 }}>
@@ -2766,7 +2790,7 @@ const SDRCognitivoB2B = () => {
                           justifyContent: 'center',
                           flexShrink: 0
                         }}>
-                          <i className={brainData.autoScheduleEnabled ? "ri-calendar-check-fill" : "ri-calendar-pause-line"} style={{ color: brainData.autoScheduleEnabled ? '#00fbff' : '#f59e0b', fontSize: '1.8rem' }}></i>
+                          <i className="ri-calendar-check-line" style={{ color: brainData.autoScheduleEnabled ? '#00fbff' : '#f59e0b', fontSize: '1.8rem' }}></i>
                         </Box>
                         <Box sx={{ flex: 1 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 0.5 }}>
@@ -2898,7 +2922,7 @@ const SDRCognitivoB2B = () => {
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <i className={!hasRegisteredKams ? "ri-user-unfollow-line" : (brainData.autoKamEnabled ? "ri-user-received-2-line" : "ri-user-shared-line")} style={{
+                      <i className="ri-user-star-line" style={{
                         color: !hasRegisteredKams ? '#f59e0b' : (brainData.autoKamEnabled ? '#10b981' : '#f59e0b'),
                         fontSize: '1.5rem'
                       }}></i>
@@ -3042,7 +3066,7 @@ const SDRCognitivoB2B = () => {
               <Box sx={{ animation: `${fadeIn} 0.3s` }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                   <Box sx={{ width: 48, height: 48, borderRadius: '14px', bgcolor: 'rgba(0,251,255,0.1)', border: '1px solid rgba(0,251,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <i className="ri-folder-shield-2-line" style={{ color: '#00fbff', fontSize: '1.8rem' }}></i>
+                    <i className="ri-file-text-line" style={{ color: '#00fbff', fontSize: '1.8rem' }}></i>
                   </Box>
                   <Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
