@@ -7089,7 +7089,7 @@ const SDRCognitivoB2B = () => {
                         ) : (
                           <Chip
                             icon={<i className="ri-time-line" style={{ color: '#f59e0b' }}></i>}
-                            label="ESPERANDO CONEXIÓN"
+                            label="NO CONECTADO"
                             color="warning"
                             variant="outlined"
                             sx={{ borderColor: '#f59e0b', color: '#f59e0b', fontWeight: 900, height: '36px', borderRadius: '18px', '& .MuiChip-icon': { ml: 1 } }}
