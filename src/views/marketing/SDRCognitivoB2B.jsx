@@ -8360,6 +8360,55 @@ const SDRCognitivoB2B = () => {
           maxWidth="xl"
           fullWidth
           PaperProps={{
+            sx: { background: '#0b141a', border: `1px solid ${selectedLead?.color || '#666cff'}`, borderRadius: '16px', width: { xs: '95vw', md: '90vw' }, height: { xs: '95vh', md: '90vh' }, color: '#e9edef' }
+          }}
+        >
+          {(() => {
+            const lead = selectedLead || { name: 'Ana Silva', role: 'VP Operations', company: 'Latam Express', color: '#666cff', score: 91, pain: 'Falta de visibilidad real', reason: 'Presupuesto IT aprobado ($100k).' };
+            const leadIntensity = lead.score > 80 ? 'ALTA' : lead.score > 50 ? 'MEDIA' : 'BAJA';
+
+            // Lógica dinámica para el Tipo de Cliente
+            const clientType = lead.score > 90 ? { label: 'El Acelerado', color: '#10b981', icon: 'ri-rocket-line', desc: 'Quiere la compra rápida' }
+              : lead.score < 70 ? { label: 'El Perdido', color: '#ef4444', icon: 'ri-question-mark', desc: 'Hace preguntas al azar' }
+                : (lead.role || '').toLowerCase().includes('vp') || (lead.role || '').toLowerCase().includes('ceo') ? { label: 'El Tomador', color: '#00fbff', icon: 'ri-vip-crown-line', desc: 'Tomador de decisiones' }
+                  : lead.status === 'DESCARTADO' ? { label: 'El Muro', color: '#f59e0b', icon: 'ri-prohibited-line', desc: 'Ya tiene otra solución' }
+                    : lead.status === 'EN SEGUIMIENTO' ? { label: 'El Fantasma', color: '#666cff', icon: 'ri-ghost-line', desc: 'El lead desaparece' }
+                      : lead.score === 88 ? { label: 'El Impaciente', color: '#f59e0b', icon: 'ri-timer-flash-line', desc: 'No quiere hablar con bot' }
+                        : { label: 'El Guardia', color: '#666cff', icon: 'ri-shield-user-line', desc: 'No es tomador de decisiones' };
+
+            const bant = {
+              budget: isAnalyzingHandoff ? '...' : (handoffAnalysis?.bant_budget || 'Desconocido'),
+              authority: isAnalyzingHandoff ? '...' : (handoffAnalysis?.bant_authority || 'Desconocida'),
+              need: isAnalyzingHandoff ? '...' : (handoffAnalysis?.bant_need || lead.pain || 'Por explorar'),
+              timeline: isAnalyzingHandoff ? '...' : (handoffAnalysis?.bant_timeline || 'Desconocido')
+            };
+
+            const brief = isAnalyzingHandoff
+              ? 'El cerebro está analizando todo el historial de la conversación, estructurando BANT y extrayendo insights clave...'
+              : (handoffAnalysis?.brief || `💡 Análisis: El prospecto busca resolver el problema de "${lead.pain || 'ineficiencias'}".`);
+
+            const recommendedAction = isAnalyzingHandoff
+              ? 'Generando recomendación táctica...'
+              : (handoffAnalysis?.recommended_action || 'Contactar a la brevedad.');
+
+            const sentiment = isAnalyzingHandoff ? 'Analizando...' : (handoffAnalysis?.sentiment || 'Neutro');
+
+            return (
+              <>
+                <DialogTitle sx={{ fontWeight: 900, color: lead.color || '#666cff', borderBottom: '1px solid rgba(255,255,255,0.1)', pb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <i className="ri-alarm-warning-line" style={{ fontSize: '1.5rem' }}></i>
+                      Sala de Guerra & Asignación (Handoff)
+                    </Box>
+                    <Chip icon={<i className={clientType.icon}></i>} label={`${clientType.label} - ${clientType.desc}`} sx={{ bgcolor: alpha(clientType.color, 0.1), color: clientType.color, fontWeight: 900, border: `1px solid ${clientType.color}` }} />
+                  </Box>
+                </DialogTitle>
+
+                <DialogContent sx={{ p: 0 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    {/* Sección Superior: Análisis de Guerra */}
+                    <Box sx={{ p: 4, bgcolor: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                       <Grid container spacing={4}>
                         {/* Columna Izquierda: Brief y Reporte */}
                         <Grid item xs={12} md={7}>
