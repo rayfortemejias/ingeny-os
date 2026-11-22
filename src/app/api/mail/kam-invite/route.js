@@ -4,11 +4,17 @@ import nodemailer from 'nodemailer';
 /**
  * Plantilla HTML futurista Cyberpunk / Dark Mode para la invitación de KAM
  */
-const generateKamInviteHtml = ({ name, role, companyName, inviteCode, email, isEdit, loginUrl }) => {
-  const title = isEdit ? 'Perfil de Ejecutivo Actualizado' : '¡Bienvenido al Equipo de Ventas!';
-  const subtitle = isEdit 
-    ? `Tus datos de acceso y perfil comercial han sido actualizados en <strong>${companyName}</strong>.`
-    : `Has sido dado de alta como Ejecutivo Comercial (KAM) en <strong>${companyName}</strong>.`;
+const generateKamInviteHtml = ({ name, role, companyName, inviteCode, email, isEdit, isDelete, loginUrl }) => {
+  const title = isDelete
+    ? 'Acceso de Ejecutivo Comercial Revocado'
+    : isEdit
+      ? 'Perfil de Ejecutivo Actualizado'
+      : '¡Bienvenido al Equipo de Ventas!';
+  const subtitle = isDelete
+    ? `Te informamos que tu perfil de Ejecutivo Comercial (KAM) en <strong>${companyName}</strong> ha sido dado de baja por el administrador.`
+    : isEdit
+      ? `Tus datos de acceso y perfil comercial han sido actualizados en <strong>${companyName}</strong>.`
+      : `Has sido dado de alta como Ejecutivo Comercial (KAM) en <strong>${companyName}</strong>.`;
   const actionText = isEdit ? 'Ver Mi Panel de Leads' : 'Ingresar al Command Center';
 
   return `
@@ -78,7 +84,7 @@ const generateKamInviteHtml = ({ name, role, companyName, inviteCode, email, isE
 
 export async function POST(request) {
   try {
-    const { email, name, role, companyName, inviteCode, isEdit } = await request.json();
+    const { email, name, role, companyName, inviteCode, isEdit, isDelete } = await request.json();
 
     if (!email) {
       return NextResponse.json({ success: false, message: 'El correo electrónico es requerido' }, { status: 400 });
@@ -101,9 +107,11 @@ export async function POST(request) {
     });
 
     const loginUrl = process.env.NEXTAUTH_URL || 'https://os.getnodepath.com';
-    const subject = isEdit 
-      ? `Actualización de Credenciales — ${companyName || 'Nodepath'}`
-      : `Invitación al Equipo Comercial de ${companyName || 'Nodepath'} — Acceso a Command Center`;
+    const subject = isDelete
+      ? `Acceso Revocado — ${companyName || 'Nodepath'}`
+      : isEdit
+        ? `Actualización de Credenciales — ${companyName || 'Nodepath'}`
+        : `Invitación al Equipo Comercial de ${companyName || 'Nodepath'} — Acceso a Command Center`;
 
     const html = generateKamInviteHtml({
       name: name || 'Ejecutivo Comercial',
@@ -112,6 +120,7 @@ export async function POST(request) {
       inviteCode: inviteCode || 'INV-PENDIENTE',
       email,
       isEdit: Boolean(isEdit),
+      isDelete: Boolean(isDelete),
       loginUrl
     });
 
@@ -120,7 +129,9 @@ export async function POST(request) {
       to: email,
       subject,
       html,
-      text: `Hola ${name},\n\nHas sido ${isEdit ? 'actualizado' : 'registrado'} como Ejecutivo Comercial en ${companyName}.\nCódigo de Invitación: ${inviteCode}\nIngresa a: ${loginUrl}\n\nEquipo Nodepath.`
+      text: isDelete
+        ? `Hola ${name},\n\nTe informamos que tu perfil de Ejecutivo Comercial en ${companyName} ha sido dado de baja por el administrador.\n\nEquipo Nodepath.`
+        : `Hola ${name},\n\nHas sido ${isEdit ? 'actualizado' : 'registrado'} como Ejecutivo Comercial en ${companyName}.\nCódigo de Invitación: ${inviteCode}\nIngresa a: ${loginUrl}\n\nEquipo Nodepath.`
     });
 
     console.log(`[KAM Mailer] Correo enviado a ${email}: Message ID: ${info.messageId}`);

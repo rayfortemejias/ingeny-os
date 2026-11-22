@@ -377,14 +377,26 @@ export async function updateKam(kamData, companyId) {
 }
 
 /**
- * Envía correo con plantilla de invitación o actualización de credenciales al KAM
+ * Elimina un Ejecutivo Comercial (KAM) y desasigna sus leads activos
  */
-export async function sendKamInviteEmail({ email, name, role, companyName, inviteCode, isEdit = false }) {
+export async function deleteKam(kamId, companyId) {
+  const cid = companyId || getLocalCompanyId();
+  return apiFetch(`${BACKEND_URL}/api/kams/delete`, {
+    method: 'POST',
+    headers: defaultHeaders(companyId),
+    body: JSON.stringify({ id: kamId, company_id: cid }),
+  })
+}
+
+/**
+ * Envía correo con plantilla de invitación, actualización o baja al KAM
+ */
+export async function sendKamInviteEmail({ email, name, role, companyName, inviteCode, isEdit = false, isDelete = false }) {
   try {
     const res = await fetch('/api/mail/kam-invite', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, role, companyName, inviteCode, isEdit })
+      body: JSON.stringify({ email, name, role, companyName, inviteCode, isEdit, isDelete })
     });
     return await res.json();
   } catch (err) {
