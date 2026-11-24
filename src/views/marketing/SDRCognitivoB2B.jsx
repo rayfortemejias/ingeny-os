@@ -83,8 +83,8 @@ const stepGuides = {
   4: "Esta métrica nos ayuda a calibrar la delegación de tareas y la generación de reportes.",
   5: "Define tus días y horarios de atención comercial. Esta definición de horario también es usada por el agente para agendar la llamada con el lead según tu disponibilidad.",
   6: "Detalla tu nicho, oferta y servicios. Esto es vital para que la IA sepa qué vender.",
-  7: "Paso Obligatorio: Sube documentos o añade URLs (catálogos, precios, servicios) y configura tu mensaje predeterminado ante consultas no mapeadas para que el SDR cuente con conocimiento real y nunca alucine.",
-  8: "Lee y acepta nuestras políticas de seguridad y privacidad antes de activar el SDR."
+  7: "Alimenta a tu SDR de forma opcional con información fidedigna de tu negocio (documentos, proyectos, catálogos, aranceles, despacho, condiciones o URLs de tu sitio web). Tu agente compartirá estos recursos con los prospectos por WhatsApp y nunca inventará información.",
+  8: "Configura tu mensaje predeterminado ante consultas desconocidas, lee y acepta nuestras políticas de seguridad y privacidad antes de activar el SDR."
 };
 
 const NICHE_DOCUMENT_EXAMPLES = {
@@ -1933,7 +1933,9 @@ const SDRCognitivoB2B = () => {
               <i className="ri-robot-line" style={{ fontSize: '1.4rem', color: '#031018' }}></i>
             </Box>
             <Box>
-              <Typography variant="subtitle2" sx={{ color: '#00fbff', fontWeight: 900, mb: 0.5, letterSpacing: 0.5, textTransform: 'uppercase' }}>Guía del Agente</Typography>
+              <Typography variant="subtitle2" sx={{ color: '#00fbff', fontWeight: 900, mb: 0.5, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                {brainSetupStep === 7 ? 'Guía del Agente — Documentos & Conocimiento del SDR' : 'Guía del Agente'}
+              </Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>
                 {stepGuides[brainSetupStep]}
               </Typography>
@@ -3064,31 +3066,8 @@ const SDRCognitivoB2B = () => {
 
             {brainSetupStep === 7 && (
               <Box sx={{ animation: `${fadeIn} 0.3s` }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                  <Box sx={{ width: 48, height: 48, borderRadius: '14px', bgcolor: 'rgba(0,251,255,0.1)', border: '1px solid rgba(0,251,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <i className="ri-file-text-line" style={{ color: '#00fbff', fontSize: '1.8rem' }}></i>
-                  </Box>
-                  <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-                      <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff' }}>Documentos & Conocimiento del SDR</Typography>
-                      <Chip label="OBLIGATORIO" size="small" sx={{ bgcolor: 'rgba(236,72,153,0.2)', color: '#ec4899', border: '1px solid rgba(236,72,153,0.4)', fontWeight: 900, fontSize: '0.7rem' }} />
-                    </Box>
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.65)', mt: 0.5 }}>
-                      Alimenta a tu SDR con información fidedigna de tu negocio (proyectos, catálogos, aranceles, despacho, condiciones). Tu agente compartirá estos documentos y enlaces con los prospectos por WhatsApp y nunca inventará información.
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {/* Alerta de Validación de Obligatoriedad */}
-                {(!brainData.documents || brainData.documents.length === 0) ? (
-                  <Alert
-                    severity="warning"
-                    icon={<i className="ri-alert-line" style={{ color: '#f59e0b', fontSize: '1.3rem' }}></i>}
-                    sx={{ mb: 3.5, bgcolor: 'rgba(245, 158, 11, 0.08)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '12px' }}
-                  >
-                    <strong>Requisito Obligatorio:</strong> Debes cargar al menos <strong>1 documento o recurso web clave</strong> para poder continuar. Tu agente necesita esta base de conocimiento para responder preguntas precisas y no cometer alucinaciones.
-                  </Alert>
-                ) : (
+                {/* Estado de Base de Conocimiento (solo cuando ya hay documentos cargados) */}
+                {brainData.documents && brainData.documents.length > 0 && (
                   <Alert
                     severity="success"
                     icon={<i className="ri-checkbox-circle-line" style={{ color: '#10b981', fontSize: '1.3rem' }}></i>}
@@ -3356,10 +3335,14 @@ const SDRCognitivoB2B = () => {
                     </List>
                   </Box>
                 )}
+              </Box>
+            )}
 
+            {brainSetupStep === 8 && (
+              <Box sx={{ animation: `${fadeIn} 0.3s` }}>
                 {/* Protocolo de Mensaje Predeterminado ante Consultas no Mapeadas */}
                 <Box sx={{
-                  mt: 4,
+                  mb: 4,
                   p: 3,
                   borderRadius: '16px',
                   bgcolor: 'rgba(0,0,0,0.35)',
@@ -3524,11 +3507,7 @@ const SDRCognitivoB2B = () => {
                     </Box>
                   )}
                 </Box>
-              </Box>
-            )}
 
-            {brainSetupStep === 8 && (
-              <Box sx={{ animation: `${fadeIn} 0.3s` }}>
                 <Typography variant="h5" sx={{ fontWeight: 900, background: 'linear-gradient(to right, #ffffff, #a5b4fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 2, letterSpacing: '-0.5px' }}>Políticas de Seguridad y Privacidad</Typography>
 
                 {/* Banner Enfatizado de Cero Uso de Información */}
@@ -3565,26 +3544,6 @@ const SDRCognitivoB2B = () => {
                   <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', lineHeight: 1.5 }}>
                     Las interacciones de prospección cumplen con la ley CAN-SPAM, RGPD y regulaciones locales. Los prospectos pueden optar por detener el contacto en cualquier momento de forma transparente.
                   </Typography>
-                </Box>
-
-                {/* Resumen del Protocolo de Fallback */}
-                <Box sx={{ mb: 3, p: 2.5, pr: { xs: 2.5, sm: 8 }, borderRadius: '14px', bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 260 }}>
-                    <i className="ri-shield-keyhole-line" style={{ color: brainData.fallbackMessageEnabled ? '#00fbff' : 'rgba(255,255,255,0.4)', fontSize: '1.4rem' }}></i>
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ color: '#fff', fontWeight: 800 }}>
-                        Respuesta ante Dudas No Mapeadas: <span style={{ color: brainData.fallbackMessageEnabled ? '#00fbff' : '#f59e0b' }}>{brainData.fallbackMessageEnabled ? 'Mensaje Predeterminado Activo ✓' : 'Humildad Epistémica Natural'}</span>
-                      </Typography>
-                      {brainData.fallbackMessageEnabled && (
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', display: 'block', maxWidth: 650, mt: 0.3 }}>
-                          "{brainData.fallbackMessage}"
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                  <Button size="small" variant="outlined" onClick={() => setBrainSetupStep(7)} sx={{ color: '#00fbff', borderColor: 'rgba(0, 251, 255, 0.4)', borderRadius: '20px', textTransform: 'none', fontSize: '11px', fontWeight: 800, px: 2, py: 0.5, '&:hover': { borderColor: '#00fbff', bgcolor: 'rgba(0, 251, 255, 0.1)' } }}>
-                    Editar en Paso 7 ✎
-                  </Button>
                 </Box>
 
                 <FormControlLabel
@@ -3636,7 +3595,7 @@ const SDRCognitivoB2B = () => {
                 (brainSetupStep === 4 && !brainData.salesTeamSize) ||
                 (brainSetupStep === 5 && !brainData.businessHours?.trim()) ||
                 (brainSetupStep === 6 && (!brainData.niche || !brainData.offer || !brainData.services)) ||
-                (brainSetupStep === 7 && (isUploading || !brainData.documents || brainData.documents.length === 0))
+                (brainSetupStep === 7 && isUploading)
               }
               sx={{ background: 'linear-gradient(45deg, #00fbff, #00bfff)', color: '#000', fontWeight: 900, px: 5, py: 1.5, borderRadius: '8px', textTransform: 'uppercase', letterSpacing: 1, boxShadow: '0 4px 15px rgba(0,251,255,0.3)', '&:hover': { background: 'linear-gradient(45deg, #00e6e6, #0099cc)', boxShadow: '0 6px 20px rgba(0,251,255,0.5)' }, '&.Mui-disabled': { background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.3)', boxShadow: 'none' } }}
             >
