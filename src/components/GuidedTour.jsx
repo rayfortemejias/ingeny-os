@@ -383,7 +383,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         element: '#tour-card-whatsapp-qr',
         popover: {
           title: '📲 Vinculación WhatsApp: Conexión por QR',
-          description: '<strong>Opción Rápida y Gratuita:</strong> Despliegue veloz en menos de 10 segundos. Solo escaneas el código QR con tu WhatsApp Web actual y el SDR Cognitivo tomará el control al instante para comenzar a prospectar y responder mensajes.',
+          description: '<strong>Conexión Directa por QR:</strong> Solo escaneas el código QR con tu WhatsApp Web actual y el SDR Cognitivo tomará el control para comenzar a prospectar y responder mensajes.',
           side: 'top',
           align: 'end'
         }
