@@ -374,7 +374,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         element: '#tour-card-api-corporativa',
         popover: {
           title: '🌐 Vinculación WhatsApp: API Corporativa',
-          description: '<strong>Opción Empresarial (Meta Cloud API):</strong> Diseñada para alto volumen de ventas y escalabilidad ilimitada. Ofrece multiatención híbrida con múltiples ejecutivos, analíticas avanzadas, verificación de marca oficial (Green Tick) y máxima estabilidad sin riesgo de bloqueos.',
+          description: '<strong>Opción Empresarial (Meta Cloud API — Disponible solo en el Plan Pro):</strong> Diseñada para alto volumen de ventas y escalabilidad ilimitada. Ofrece multiatención híbrida con múltiples ejecutivos, analíticas avanzadas, verificación de marca oficial y máxima estabilidad sin riesgo de bloqueos.',
           side: 'top',
           align: 'center'
         }
