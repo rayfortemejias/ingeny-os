@@ -400,8 +400,8 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
       {
         element: '#tour-tab-inbox',
         popover: {
-          title: '🤝 Handoff 2.0 & Bandeja Compartida',
-          description: 'Cuando un prospecto califica con alto interés, el agente alerta a tu ejecutivo asignado por WhatsApp y lo transfiere a este <strong>Inbox Humano</strong> junto a un brief con la necesidad detectada.',
+          title: '🤝 Bandeja Compartida',
+          description: 'Cuando un prospecto califica con alto interés, el agente alerta a tu ejecutivo asignado por WhatsApp y lo transfiere a este <strong>Inbox Humano</strong> junto a un <strong>brief</strong> (un resumen ejecutivo con los datos clave del cliente, su necesidad detectada y lo conversado).',
           side: 'bottom',
           align: 'center'
         }
@@ -1010,6 +1010,7 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
         { regex: /\bKAMs?\b/g, tip: 'KAM (Key Account Manager): Ejecutivo comercial humano encargado de atender la llamada y cerrar la venta.' },
         { regex: /\bRAG\b/g, tip: 'RAG: Base de conocimiento oficial (tus documentos y web) que consulta la IA para responder con datos reales sin inventar.' },
         { regex: /\bHandoff\b/g, tip: 'Handoff: Traspaso ordenado del prospecto desde la IA hacia un ejecutivo comercial humano.' },
+        { regex: /\bbrief\b/gi, tip: 'Brief: Resumen ejecutivo con los datos clave del cliente, su necesidad detectada y el contexto de la conversación.' },
       ]
       const enrichGlossaryHtml = (html) => {
         if (!html || typeof html !== 'string') return html
