@@ -2090,13 +2090,25 @@ const SDRCognitivoB2B = () => {
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
-                      label="Correo Corporativo *"
-                      value={brainData.corporateEmail}
-                      onChange={e => setBrainData({ ...brainData, corporateEmail: e.target.value })}
-                      error={brainData.corporateEmail.length > 0 && !isValidEmail(brainData.corporateEmail)}
-                      helperText={brainData.corporateEmail.length > 0 && !isValidEmail(brainData.corporateEmail) ? "Formato inválido" : ""}
-                      InputProps={{ sx: { color: '#fff', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: '12px', transition: 'all 0.3s ease', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(0,251,255,0.5) !important' }, '&.Mui-focused': { bgcolor: 'rgba(0,251,255,0.05)' }, '&.Mui-focused fieldset': { borderColor: '#00fbff !important', borderWidth: '2px' } } }}
-                      InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
+                      disabled
+                      label="Correo *"
+                      value={session?.user?.email || brainData.corporateEmail || ''}
+                      helperText="Correo verificado de tu cuenta de acceso"
+                      InputProps={{
+                        readOnly: true,
+                        sx: {
+                          color: 'rgba(255,255,255,0.75)',
+                          bgcolor: 'rgba(255,255,255,0.02)',
+                          borderRadius: '12px',
+                          '& .MuiInputBase-input.Mui-disabled': {
+                            WebkitTextFillColor: 'rgba(255,255,255,0.75)',
+                            cursor: 'not-allowed'
+                          },
+                          '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }
+                        }
+                      }}
+                      InputLabelProps={{ shrink: true, sx: { color: 'rgba(255,255,255,0.5)' } }}
+                      FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.45)' } }}
                     />
                   </Grid>
                   <Grid item xs={12}>
