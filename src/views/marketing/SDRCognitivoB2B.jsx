@@ -1144,11 +1144,28 @@ const SDRCognitivoB2B = () => {
       const extractedText = `\n\n--- Sitio Web Oficial: ${brainData.businessName || 'Empresa'} (${formattedUrl}) ---\n${extractRes.text || ''}`;
 
       setBrainData(prev => {
+        const normalizedUrl = formattedUrl.trim().toLowerCase().replace(/\/+$/, '');
+        const filteredDocs = (prev.documents || []).filter(d => {
+          const dUrl = String(d?.url || d?.name || '').trim().toLowerCase().replace(/\/+$/, '');
+          return !(d?.type === 'url' && dUrl === normalizedUrl);
+        });
+        const filteredShareable = (prev.shareableResources || []).filter(r => {
+          const rUrl = String(r?.url || '').trim().toLowerCase().replace(/\/+$/, '');
+          return rUrl !== normalizedUrl;
+        });
+
+        // Evitar duplicar el bloque de texto de la misma URL en knowledgeBaseText
+        const existingKb = prev.knowledgeBaseText || '';
+        const marker = `--- Sitio Web Oficial:`;
+        const cleanedKb = existingKb.includes(formattedUrl)
+          ? existingKb.split(marker).filter(part => !part.includes(formattedUrl)).join(marker).trim()
+          : existingKb;
+
         const nextState = {
           ...prev,
-          documents: [...(prev.documents || []), newDocRecord],
-          knowledgeBaseText: (prev.knowledgeBaseText || '') + extractedText,
-          shareableResources: [...(prev.shareableResources || []), {
+          documents: [...filteredDocs, newDocRecord],
+          knowledgeBaseText: cleanedKb + extractedText,
+          shareableResources: [...filteredShareable, {
             title: `Sitio Web Oficial (${brainData.businessName || 'Empresa'})`,
             description: 'Sitio web corporativo.',
             url: formattedUrl
@@ -1196,6 +1213,31 @@ const SDRCognitivoB2B = () => {
       return nextState;
     })
   }
+
+  // Deduplicar automáticamente documentos/URLs repetidos guardados previamente en localStorage
+  useEffect(() => {
+    const docs = brainData.documents || [];
+    if (docs.length < 2) return;
+    const seen = new Set();
+    const deduped = docs.filter(d => {
+      const key = `${d?.type || ''}::${String(d?.url || d?.name || '').trim().toLowerCase().replace(/\/+$/, '')}::${String(d?.title || '').trim().toLowerCase()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    if (deduped.length !== docs.length) {
+      setBrainData(prev => {
+        const nextState = { ...prev, documents: deduped };
+        if (typeof window !== 'undefined') {
+          try {
+            const { knowledgeBaseText, ...dataToSave } = nextState;
+            localStorage.setItem(`sdr_brain_config_${companyId || 'guest_ssr'}`, JSON.stringify(dataToSave));
+          } catch (e) { }
+        }
+        return nextState;
+      });
+    }
+  }, [brainData.documents, companyId]);
 
   // --- Mock Data ---
   const allLeadsRaw = [
@@ -3327,9 +3369,25 @@ const SDRCognitivoB2B = () => {
                             }
                             secondary={<Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', mt: 0.5 }}>{doc.name} ({doc.size}){doc.description ? ` • ${doc.description}` : ''}</Typography>}
                           />
-                          <IconButton size="small" onClick={() => removeDocument(idx)} sx={{ color: 'rgba(255,255,255,0.4)', '&:hover': { color: '#ef4444' } }}>
-                            <i className="ri-delete-bin-line"></i>
-                          </IconButton>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => removeDocument(idx)}
+                            startIcon={<i className="ri-close-line" style={{ fontSize: '14px' }}></i>}
+                            sx={{
+                              color: '#ef4444',
+                              borderColor: 'rgba(239, 68, 68, 0.4)',
+                              bgcolor: 'rgba(239, 68, 68, 0.06)',
+                              fontWeight: 800,
+                              fontSize: '0.72rem',
+                              textTransform: 'none',
+                              flexShrink: 0,
+                              ml: 1,
+                              '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.18)', borderColor: '#ef4444' }
+                            }}
+                          >
+                            Eliminar
+                          </Button>
                         </ListItem>
                       ))}
                     </List>
