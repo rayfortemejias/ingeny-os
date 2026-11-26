@@ -72,12 +72,12 @@ const NavSearch = () => {
   }, [])
 
   const renderSearchBar = () => (
-    <Box 
+    <Box
       onClick={handleOpen}
-      sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        cursor: 'pointer', 
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
         bgcolor: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: '8px',
@@ -117,16 +117,16 @@ const NavSearch = () => {
       </Box>
 
       {/* Omnibox Modal */}
-      <Dialog 
-        open={open} 
+      <Dialog
+        open={open}
         onClose={handleClose}
         maxWidth="md"
         fullWidth
         PaperProps={{
-          sx: { 
-            bgcolor: 'rgba(6, 18, 27, 0.85)', 
+          sx: {
+            bgcolor: 'rgba(6, 18, 27, 0.85)',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(0,251,255,0.2)', 
+            border: '1px solid rgba(0,251,255,0.2)',
             borderRadius: '16px',
             boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
             mt: { xs: 2, md: '10vh' },
@@ -153,25 +153,25 @@ const NavSearch = () => {
 
         {/* Dynamic Content Area */}
         <Box sx={{ p: 3, maxHeight: '60vh', overflowY: 'auto' }}>
-          
+
           <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 900, letterSpacing: 1, display: 'block', mb: 2 }}>
             ATAJOS RÁPIDOS
           </Typography>
           <Grid container spacing={2} sx={{ mb: 4 }}>
             {filteredQuickLinks.length > 0 ? filteredQuickLinks.map((link, idx) => (
               <Grid item xs={12} sm={6} md={3} key={idx}>
-                <Box 
-                  onClick={() => { 
+                <Box
+                  onClick={() => {
                     if (link.external) {
                       window.open(link.path, '_blank');
                     } else {
-                      router.push(link.path); 
+                      router.push(link.path);
                     }
-                    handleClose(); 
+                    handleClose();
                   }}
-                  sx={{ 
+                  sx={{
                     p: 2, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)',
-                    cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', borderColor: link.color, transform: 'translateY(-2px)' } 
+                    cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', borderColor: link.color, transform: 'translateY(-2px)' }
                   }}
                 >
                   <i className={link.icon} style={{ fontSize: '1.5rem', color: link.color, marginBottom: '8px', display: 'block' }}></i>
@@ -208,13 +208,13 @@ const NavSearch = () => {
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {filteredResources.length > 0 ? filteredResources.map((res, idx) => (
-                  <Box key={idx} onClick={() => { 
+                  <Box key={idx} onClick={() => {
                     if (res.external) {
                       window.open(res.path, '_blank');
                     } else {
-                      router.push(res.path); 
+                      router.push(res.path);
                     }
-                    handleClose(); 
+                    handleClose();
                   }} sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 1.5, borderRadius: '8px', '&:hover': { bgcolor: 'rgba(255,255,255,0.03)', cursor: 'pointer' } }}>
                     <i className={res.icon} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.2rem' }}></i>
                     <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>{res.label}</Typography>
