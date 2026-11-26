@@ -82,6 +82,8 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
           font-size: 1.15rem !important;
           font-weight: 800 !important;
           letter-spacing: 0.5px !important;
+          line-height: 1.3 !important;
+          padding-right: 28px !important;
           margin-bottom: 10px !important;
           display: flex !important;
           align-items: center !important;
@@ -103,24 +105,38 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
           display: flex !important;
           justify-content: space-between !important;
           align-items: center !important;
+          gap: 10px !important;
+          flex-wrap: wrap !important;
           margin-top: 16px !important;
           padding-top: 14px !important;
           border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
           font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
         }
 
+        .driver-popover.nodepath-tour-popover .driver-popover-navigation-btns {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: flex-end !important;
+          gap: 8px !important;
+          flex-shrink: 0 !important;
+          margin-left: auto !important;
+        }
+
         /* Texto de Progreso (Paso X de Y) */
         .driver-popover.nodepath-tour-popover .driver-popover-progress-text {
           color: #00fbff !important;
           font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
-          font-size: 0.78rem !important;
+          font-size: 0.74rem !important;
           font-weight: 800 !important;
           text-transform: uppercase !important;
-          letter-spacing: 0.8px !important;
+          letter-spacing: 0.6px !important;
           background: rgba(0, 251, 255, 0.1) !important;
-          padding: 4px 10px !important;
+          padding: 5px 10px !important;
           border-radius: 20px !important;
           border: 1px solid rgba(0, 251, 255, 0.25) !important;
+          white-space: nowrap !important;
+          flex-shrink: 0 !important;
+          line-height: 1.2 !important;
         }
 
         /* Botón de Cierre (X) */
@@ -139,16 +155,23 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
 
         /* Botón Siguiente / Finalizar */
         .driver-popover.nodepath-tour-popover .driver-popover-next-btn {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 5px !important;
+          white-space: nowrap !important;
+          line-height: 1.2 !important;
+          height: 32px !important;
           background: linear-gradient(45deg, #00fbff, #00bfff) !important;
           color: #000 !important;
           font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
           font-weight: 900 !important;
-          font-size: 0.78rem !important;
+          font-size: 0.74rem !important;
           border-radius: 8px !important;
-          padding: 7px 16px !important;
+          padding: 0 14px !important;
           border: none !important;
           text-transform: uppercase !important;
-          letter-spacing: 0.8px !important;
+          letter-spacing: 0.6px !important;
           cursor: pointer !important;
           box-shadow: 0 0 15px rgba(0, 251, 255, 0.35) !important;
           transition: all 0.2s ease !important;
@@ -162,13 +185,20 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
 
         /* Botón Anterior */
         .driver-popover.nodepath-tour-popover .driver-popover-prev-btn {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 5px !important;
+          white-space: nowrap !important;
+          line-height: 1.2 !important;
+          height: 32px !important;
           background: rgba(255, 255, 255, 0.05) !important;
-          color: rgba(255, 255, 255, 0.8) !important;
+          color: rgba(255, 255, 255, 0.85) !important;
           font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
           font-weight: 700 !important;
-          font-size: 0.78rem !important;
+          font-size: 0.74rem !important;
           border-radius: 8px !important;
-          padding: 7px 14px !important;
+          padding: 0 12px !important;
           border: 1px solid rgba(255, 255, 255, 0.15) !important;
           text-transform: uppercase !important;
           letter-spacing: 0.5px !important;
@@ -939,28 +969,28 @@ export default function GuidedTour({ run, setRun, setActiveTab, tourType = 'gene
 
     if (tourType === 'config') {
       tourSteps = configTourSteps
-      defaultDoneText = '¡Comenzar a Configurar! ✓'
+      defaultDoneText = '¡Configurar! ✓'
     } else if (tourType === 'whatsapp') {
       tourSteps = whatsappTourSteps
-      defaultDoneText = '¡Entendido, Vincular WhatsApp! 📲'
+      defaultDoneText = '¡Vincular! ✓'
     } else if (tourType === 'whatsapp_connected') {
       tourSteps = whatsappConnectedTourSteps
-      defaultDoneText = '¡Listo para Probar! 🚀'
+      defaultDoneText = '¡Entendido! ✓'
     } else if (tourType === 'leads') {
       tourSteps = leadsTourSteps
-      defaultDoneText = '¡Dominado, Ir a Leads! 🎯'
+      defaultDoneText = '¡Ir a Leads! ✓'
     } else if (tourType === 'team_handoff') {
       tourSteps = teamHandoffTourSteps
-      defaultDoneText = '¡Entendido, Gestionar Equipo! 👥'
+      defaultDoneText = '¡Entendido! ✓'
     } else if (tourType === 'post_call') {
       tourSteps = postCallTourSteps
-      defaultDoneText = '¡Flujo Post-Llamada Dominado! ✓'
+      defaultDoneText = '¡Entendido! ✓'
     } else if (tourType === 'command_center') {
       tourSteps = commandCenterTourSteps
-      defaultDoneText = '¡Comenzar en el Dashboard! 🚀'
+      defaultDoneText = '¡Comenzar! ✓'
     } else if (tourType === 'executive') {
       tourSteps = executiveTourSteps
-      defaultDoneText = '¡Listo para Gestionar mis Leads! 🚀'
+      defaultDoneText = '¡Comenzar! ✓'
     }
 
     let isCancelled = false
