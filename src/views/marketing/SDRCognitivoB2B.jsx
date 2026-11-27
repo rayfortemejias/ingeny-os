@@ -1505,20 +1505,23 @@ const SDRCognitivoB2B = () => {
     return () => clearInterval(pollInterval)
   }, [status, checkWhatsappStatus, loadLeadsFromBackend, loadKamsFromBackend, fetchCalendarStatus])
 
-  // Sincronización en tiempo real de la conversación activa en el Chat Modal
+  // Sincronización en tiempo real de la conversación activa (Chat Modal y Vista de Lista)
   useEffect(() => {
-    if (!isChatModalOpen || !selectedLead?.id) return
+    const isListChatVisible = activeTab === 0 && viewMode === 'list'
+    if ((!isChatModalOpen && !isListChatVisible) || !selectedLead?.id) return
     let isSubscribed = true
 
     const loadConvs = async () => {
       try {
         const response = await getConversations(selectedLead.id, companyId)
 
-        if (isSubscribed && response?.data && Array.isArray(response.data) && response.data.length > 0) {
-          const mapped = response.data.map(c => ({
-            sender: (c.Role || c.role || '').toLowerCase().includes('user') ? 'user' : 'ia',
-            text: c.Content || c.content || c.Text || c.text || ''
-          }))
+        if (isSubscribed && response?.data && Array.isArray(response.data)) {
+          const mapped = response.data
+            .map(c => ({
+              sender: (c.Role || c.role || '').toLowerCase().includes('user') ? 'user' : 'ia',
+              text: c.Content || c.content || c.Text || c.text || ''
+            }))
+            .filter(m => m.text.trim() !== '')
 
           setLiveChat(prev => {
             if (JSON.stringify(prev) === JSON.stringify(mapped)) return prev;
@@ -1531,6 +1534,7 @@ const SDRCognitivoB2B = () => {
       }
     }
 
+    setLiveChat([])
     loadConvs()
     const interval = setInterval(loadConvs, 3000)
 
@@ -1539,7 +1543,7 @@ const SDRCognitivoB2B = () => {
       isSubscribed = false
       clearInterval(interval)
     }
-  }, [isChatModalOpen, selectedLead?.id, companyId])
+  }, [isChatModalOpen, activeTab, viewMode, selectedLead?.id, companyId])
 
   // Abrir chat de lead automáticamente si el usuario hace click en una notificación global
   useEffect(() => {
